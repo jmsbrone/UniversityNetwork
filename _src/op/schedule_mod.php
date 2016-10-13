@@ -77,7 +77,7 @@ switch($data['type']){
                 $rule = $mysql->query("SELECT `ClassType` as `classType`, `SubgroupIndex` as `subgroup`, `Subjects_ID` as `subjectID` FROM `rulesList` WHERE `id` = $ruleID")->fetch_assoc();
                 
                 $classes = array();
-                $result = $mysql->query("SELECT `ID` as `id`, `StartTime` as `startTimestamp` FROM `classes` WHERE `classrules_id` = $ruleID AND `startTime` > '$startTime'");
+                $result = $mysql->query("SELECT `ID` as `id`, UNIX_TIMESTAMP(`StartTime`) as `startTimestamp` FROM `classes` WHERE `classrules_id` = $ruleID AND `startTime` > '$startTime'");
                 if (!$result) throw403();
                 if ($result->num_rows == 0) continue;
                 while($row = $result->fetch_assoc()){

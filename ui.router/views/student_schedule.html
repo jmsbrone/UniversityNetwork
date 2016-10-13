@@ -1,0 +1,55 @@
+<style>
+    .schedule-cell {
+        min-height: 25px;
+        min-width: 100px;
+        text-align: center;
+        line-height: 25px;
+    }
+    /* odd */
+    .schedule-color:nth-child(odd){
+        background: #dbdbdb;
+    }
+    .schedule-color:nth-child(odd) > .schedule-cell:first-child {
+        background: #c6e0b4;
+    }
+    
+    /* even */
+    .schedule-color:nth-child(even){
+        background: #ededed;
+    }
+    .schedule-color:nth-child(even) > .schedule-cell:first-child {
+        background: #e2efda;
+    }
+    
+    /* header */
+    .schedule-header {
+        background: #e2efda;
+    }
+    .schedule-header.schedule-cell-active {
+        background: #c6e0b4 !important;
+    }
+    
+    /* active */
+    .schedule-color:nth-child(odd) > .schedule-cell-active {
+        background: #e4feb4;
+    }
+    .schedule-color:nth-child(even) > .schedule-cell-active {
+        background: #ecffcd;
+    }
+</style>
+<div layout="column">
+    <div layout="row" layout-align="center center">
+        <h1 style="text-align: center;" flex> {{ week }} неделя </h1>
+        <md-datepicker style="margin-left: -203px;" ng-model="selectedDate" md-placeholder="Enter date" md-min-date="semester.startTimestamp" md-max-date="semester.endTimestamp"></md-datepicker>
+        <div flex="5"></div>
+    </div>
+    <md-divider></md-divider>
+    <div layout="row" layout-align="center center" class="schedule-color">
+        <div class="schedule-cell"></div>
+        <div class="schedule-cell schedule-header {{ activeDay == (d.getDay() - 1) ? 'schedule-cell-active' : '' }}" ng-repeat="d in dates" flex>{{ d | date }}</div>
+    </div>
+    <div layout="row" ng-repeat="order in [0,1,2,3] track by $index" class="schedule-color">
+        <div class="schedule-cell">{{ times[order] }}</div>
+        <div ng-repeat="day in [0,1,2,3,4] track by $index" class="schedule-cell {{ activeDay == day ? 'schedule-cell-active' : '' }}" flex>{{ classes[day][order] ? classes[day][order] : 'empty' }} </div>
+    </div>
+</div>  

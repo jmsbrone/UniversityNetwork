@@ -28,6 +28,9 @@ app.service('flib', function(){
                 }
             }
             return res;
+        },
+        timestampToDate: function(t){
+            return new Date(t * 1000);
         }
     }
 });
