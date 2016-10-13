@@ -1,0 +1,31 @@
+<div flex layout="row">
+    <div flex></div>
+    <div flex-lg="50" flex-md="75" flex layout="column">
+        <h3>Admin</h3>
+        <md-divider></md-divider>
+        <div layout="row" layout-align="center center" ng-show="!addForm">
+            <p>Manager list</p>
+            <md-button class="md-raised" aria-label="Add new" ng-click="addForm = true">
+                <md-icon md-svg-icon="images/icons/ic_add_box_black_24px.svg"></md-icon>
+            </md-button>
+        </div>
+        <div ng-show="!addForm" layout="column">
+            <div ng-repeat="user in list" layout="row">
+                <div flex="25">{{ user.name }}</div>
+                <div flex>{{ user.hash }}</div>
+                <div flex="25">{{ user.used | yesNo }}</div>
+            </div>
+        </div>
+        <md-content layout-gt-sm="row" layout-padding ng-show="addForm">
+            <md-button ng-click="addForm = false">Back</md-button>
+            <div>
+                <md-input-container>
+                    <label>Name</label>
+                    <input ng-model="name">
+                </md-input-container>
+            </div>
+            <md-button ng-click="add()">Confirm</md-button>
+        </md-content>
+    </div>
+    <div flex></div>
+</div>

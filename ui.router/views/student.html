@@ -1,0 +1,83 @@
+<style>
+    .menu-pointer {
+        width: 0;
+        height: 0;
+        border-top: 25px solid transparent;
+        border-bottom: 25px solid transparent;
+        border-right: 20px solid black;
+        background-color: lightgrey;
+    }
+    .menu-pointer-inset{
+        margin-left: 5px;
+        margin-top: -21px;
+        width: 0;
+        height: 0;
+        border-top: 24px solid transparent;
+        border-bottom: 24px solid transparent;
+        border-right: 18px solid white;
+    }
+    .menu-pointer-hidden {
+        width: 25px;
+        background: white;
+        border-left: 0px;
+        border-top: 0px;
+        border-bottom: 0px;
+        border-right: 1px solid black;
+        padding-top: 25px;
+        height: 25px;
+    }
+    .menu-pointer-hidde .menu-pointer-inset {
+        border: 0px;
+    }
+    .menu-item-active {
+        background: lightgrey;
+    }
+    .menu-item {
+        height: 50px;
+        padding-left: 25%;
+        line-height: 50px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .menu-item:focus{
+        outline: none;
+    }
+    .filler {
+        border-right: 1px solid black;
+    }
+    
+    #search-box {
+        border-right: 1px solid black;
+    }
+    #main-menu > *{
+        margin: 0px;
+    }
+</style>
+<div layout="column">
+    <div layout="row">
+        <div flex="30" flex-md="25" flex-lg="20" flex-xl="15" id="main-menu" layout="column" ng-controller="studentMenuController" stretch-down>
+            <div layout="row" ng-repeat="item in menuItems">
+                <div flex class="menu-item {{ activeMenuItem == item ? 'menu-item-active' : '' }}" ng-click="setActiveItem(item)">
+                    <md-icon md-svg-icon="images/icons/{{ item.icon }}.svg"></md-icon>    {{ item.text }}
+                </div>
+                <div class="menu-pointer {{ activeMenuItem != item ? 'menu-pointer-hidden' : '' }}">
+                    <div class="menu-pointer-inset"></div>
+                </div>
+            </div>
+            <div layout="row" id="search-box">
+                <md-input-container flex-offset="15" flex="75">
+                    <md-icon md-svg-src="images/icons/search_icon.svg"></md-icon>
+                    <input type="text">
+                </md-input-container>
+            </div>
+            <div class="filler" flex></div>
+        </div>
+        <div flex layout="column">
+            <div ui-view="profile"></div>
+            <div ui-view="news"></div>
+            <div ui-view="group"></div>
+            <div ui-view="schedule"></div>
+            <div ui-view="subjects"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>API v1.0</title>
+    
+    <!-- JQuery --> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <!-- AngularJS -->
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+    <script>
+        var app = angular.module('apiApp', ['ngMaterial']);
+        app.controller('main', function($scope){
+            $scope.updated = '16:00 28/09/2016';
+            $scope.tabs = {
+                auth: {
+                    arr: [],
+                    name: 'Система'
+                },
+                users: {
+                    arr: [],
+                    name: 'Пользователи'
+                },
+                structure: {
+                    arr: [],
+                    name: 'Структура'
+                }
+            };
+            var add = function(obj, action, rtype, type, data, example, codes){
+                obj.arr.push({
+                    'action': action,
+                    url: ('/op/_rc.php?rtype='+rtype + '&type=' + type) + (data.length > 0 ? ("&"+data) : ''),
+                    example: location.origin + ('/op/_rc.php?rtype='+rtype + '&type=' + type) + (example.length > 0 ? ('&' + example) : ''),
+                    codes: codes
+                });
+            };
+            
+            add($scope.tabs.auth, 
+                'Аутентификация', 
+                'auth_req', 'login', 
+                'login=<string>&psw=<string>', 
+                'login=test1234&psw=test1234', 
+                [{
+                    c: 200, 
+                    desc: 'Успешная аутентификация'
+                }, {
+                    c: 403, 
+                    desc: 'Ошибка аутентификации'
+            }]);
+            add($scope.tabs.auth, 
+                'Регистрация студента', 
+                'student_mod', 'register', 
+                'login=<string>&psw=<string>&hash=<string>',
+                'login=test1234&psw=test1234&hash=abcdef1234', 
+                [{
+                    c: 200, 
+                    desc: 'Успешная регистрация'
+                }, {
+                    c: 403, 
+                    desc: 'Ошибка регистрации'
+            }]);
+            add($scope.tabs.auth,
+               'Регистрация менеджера',
+               'manager_mod', 'register',
+               'login=<string>&psw=<string>&hash=<string>',
+                'login=test1234&psw=test1234&hash=abcdef1234', 
+                [{
+                    c: 200, 
+                    desc: 'Успешная регистрация'
+                }, {
+                    c: 403, 
+                    desc: 'Ошибка регистрации'
+            }]);
+            add($scope.tabs.auth,
+               'Проверка приглашения',
+               'auth_req', 'invite_check',
+               'hash=<string>', 'hash=1234abcd',
+               [{
+                    c: 200, 
+                    desc: 'Успешный запрос'
+                }, {
+                    c: 404,
+                    desc: 'Не найдено'
+            }]);
+            add($scope.tabs.users,
+               'Список менеджеров',
+               'manager_mod', 'list',
+               '', '',
+               [{
+                    c: 200, 
+                    desc: 'Успешный запрос'
+                }, {
+                    c: 403, 
+                    desc: 'Ошибка доступа'
+            }]);
+        });
+        
+    </script>
+</head>
+    
+<body ng-app="apiApp" ng-cloak>
+    <md-content class="md-padding"  ng-controller="main">
+        <h3>API v1.0</h3>
+        <h5>{{ updated }}</h5>
+        <p>Скрипт: /op/_rc?&lt;GET&gt;</p>
+        <md-divider></md-divider>
+        <md-tabs md-dynamic-height md-border-bottom>
+            <md-tab ng-repeat="tab in tabs" id="tab{{ $i }}">
+                <md-tab-label>{{ tab.name }}</md-tab-label>
+                <md-tab-body layout="column">
+                    <div ng-repeat="note in tab.arr">
+                        <md-content layout="row">
+                            <div flex="20">{{ note.action }}</div>
+                            <md-divider></md-divider>
+                            <div flex layout="column">
+                                <p>{{ note.url }}</p>
+                                <md-divider></md-divider>
+                                <h5><i>Example: </i></h5>
+                                <a href="{{ note.example }}">{{ note.example }}</a>
+                            </div>
+                            <md-divider></md-divider>
+                            <div flex="20" layout="column">
+                                <p ng-repeat="code in note.codes">{{ code.c }} - {{ code.desc }}</p>
+                            </div>
+                        </md-content>
+                        <md-divider></md-divider>
+                    </div>
+                </md-tab-body>
+            </md-tab>
+        </md-tabs>
+    </md-content>
+</body>
+</html>

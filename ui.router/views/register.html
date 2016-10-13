@@ -1,0 +1,54 @@
+<div flex layout="column" layout-align="center center">
+    <div ng-show="!isRegisterInput">
+        <md-button ui-sref="app.main">Back</md-button>
+        <md-input-container>
+            <label>Code</label>
+            <input type="text" ng-model="hash">
+        </md-input-container>
+        <md-button ng-click="checkHash()">Confirm</md-button>
+    </div>
+    <div ng-show="managerRegister">
+        <form layout="column" name="managerRegisterForm">
+            <h4>Registration (manager)</h4>
+            <md-input-container class="md-block">
+                <label>Name</label>
+                <input type="text" value="{{ user.name }}" disabled>
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Login</label>
+                <input type="text" name="userLogin" ng-model="login" md-minlength="4" md-maxlength="16">
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Password</label>
+                <input type="password" name="userPsw" ng-model="psw"  md-minlength="4" md-maxlength="16">
+            </md-input-container>
+            <md-button ng-click="register()" ng-show="managerRegisterForm.$valid">Register</md-button>
+        </form>
+    </div>
+    <div ng-show="studentRegister">
+        <form layout="column" name="studentRegisterForm">
+            <h4>Registration (student of {{ user.groupName }})</h4>
+            <md-input-container class="md-block">
+                <label>Surname</label>
+                <input type="text" value="{{ user.surname }}" disabled>
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Name</label>
+                <input type="text" value="{{ user.name }}" disabled>
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Name</label>
+                <input type="text" value="{{ user.lastname }}" disabled>
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Login</label>
+                <input type="text" name="user.login" ng-model="login" md-minlength="4" md-maxlength="16" required>
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Password</label>
+                <input type="password" name="user.psw" ng-model="psw"  md-minlength="4" md-maxlength="16" required>
+            </md-input-container>
+            <md-button ng-click="register()" ng-show="studentRegisterForm.$valid">Register</md-button>
+        </form>
+    </div>
+</div>

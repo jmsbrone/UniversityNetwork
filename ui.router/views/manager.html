@@ -1,0 +1,478 @@
+<md-tabs md-dynamic-height md-border-bottom>
+    <md-tab label="Departments">
+        <md-content class="md-padding">
+            <!-- Departments -->
+            <md-button ng-show="!depForm" ng-click="depForm = true">New department</md-button>
+            <form name="addDepForm" ng-show="depForm">
+                <md-button ng-click="depForm = false">Close</md-button>
+                <md-input-container>
+                    <label>Name</label>
+                    <input type="text" md-minlength="10" md-maxlength="64" name="name" ng-model="newDep.name"  ng-pattern="/^Кафедра(\s[а-я]+)+$/" required>
+                </md-input-container>
+                <md-button ng-show="addDepForm.$valid" ng-click="addDep()">Add</md-button>
+            </form>
+            <div ng-show="!depForm">
+                <md-input-container>
+                    <label>Department</label>
+                    <md-select ng-model="activeDep">
+                        <md-option ng-repeat="dep in departments" ng-value="dep">{{ dep.name }}</md-option>
+                    </md-select>
+                </md-input-container>
+                <md-button ng-click="deleteDep()">Delete</md-button>
+            </div>
+            <md-divider></md-divider>
+            <md-tabs md-dynamic-height>
+                <md-tab label="Profs">
+                    <form name="addProfForm" ng-show="profForm">
+                        <md-button ng-click="profForm = false">Close</md-button>
+                        <md-input-container>
+                            <label>Surname</label>
+                            <input type="text" md-maxlength="45" name="surname" ng-model="newProf.surname" required>
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Name</label>
+                            <input type="text" md-maxlength="45" name="name" ng-model="newProf.name" required>
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Lastname</label>
+                            <input type="text" md-maxlength="45" name="lastname" ng-model="newProf.lastname" required>
+                        </md-input-container>
+                        <md-button ng-show="addProfForm.$valid" ng-click="addProf()">Add</md-button>
+                    </form>
+                    <div ng-show="!profForm && activeDep" layout="column">
+                        <md-button ng-click="profForm = true">New prof</md-button>
+                        <div ng-repeat="prof in activeDep.profs" layout="row">
+                            <div flex="20">
+                                <md-button ng-click="deleteProf(prof)">Delete</md-button>
+                            </div>
+                            <div flex="50">{{ prof.surname + " " + prof.name + " " + prof.lastname }}</div>
+                        </div>
+                    </div>
+                </md-tab>
+                <md-tab label="Profiles">
+                        <form ng-show="profileForm" name="addProfileForm" layout="column" layout-align="center center">
+                            <md-button ng-click="profileForm = false">Close</md-button>
+                            <md-input-container>
+                                <label>Name</label>
+                                <input type="text" name="name" ng-model="newProfile.name" md-minlength="9" md-maxlength="64" ng-pattern="/^[а-яА-Я\s]+$/" required>
+                                <div ng-messages="addProfileForm.name.$error">
+                                    <div ng-message="required">This is required.</div>
+                                    <div ng-message="md-maxlength">Under 64 characters.</div>
+                                    <div ng-message="md-minlength">9 or more characters.</div>
+                                    <div ng-message="pattern">Invalid symbols.</div>
+                                </div>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Short</label>
+                                <input type="text" name="short" ng-model="newProfile.short" md-minlength="1" md-maxlength="7" ng-pattern="/^[А-Я]+$/" required>
+                                <div ng-messages="addProfileForm.short.$error">
+                                    <div ng-message="required">This is required.</div>
+                                    <div ng-message="md-maxlength">Under 7 characters.</div>
+                                    <div ng-message="pattern">Invalid symbols.</div>
+                                </div>
+                            </md-input-container>
+                            <md-button ng-click="addProfile()" ng-show="addProfileForm.$valid">Confirm</md-button>
+                        </form>
+                        <div ng-show="!profileForm && activeDep">
+                            <md-button ng-click="profileForm = true">New profile</md-button>
+                            <md-input-container>
+                                <label>Profile</label>
+                                <md-select ng-model="activeProfile">
+                                    <md-option ng-repeat="profile in activeDep.profiles" ng-value="profile">{{ profile.name }} ({{ profile.short }})</md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-button ng-click="deleteProfile()">Delete</md-button>
+                        </div>
+                        <md-divider></md-divider>
+
+                        <!-- Groups -->
+                        <form ng-show="groupForm" name="addGroupForm" layout="column" layout-align="center center">
+                            <div layout="row">
+                                <md-button ng-click="groupForm = false">Back</md-button>
+                                <p>Adding group for {{ activeProfile.name }} ({{ activeDep.name }})</p>
+                            </div>
+                            <md-input-container>
+                                <label>Year</label>
+                                <input type="number" name="newGroup.year" ng-model="newGroup.year" ng-pattern="/^\d\d\d\d$/" required>
+                                <div ng-messages="addProfileForm.name.$error">
+                                    <div ng-message="required">This is required.</div>
+                                    <div ng-message="pattern">Invalid symbols.</div>
+                                </div>
+                            </md-input-container>
+                            <md-button ng-click="addGroup()" ng-show="addGroupForm.$valid">Confirm</md-button>
+                        </form>
+
+                        <div ng-show="!groupForm && activeProfile">
+                            <md-button ng-click="groupForm = true">Add</md-button>
+                            <md-input-container>
+                                <label>Group</label>
+                                <md-select ng-model="activeGroup">
+                                    <md-option ng-repeat="group in activeProfile.groups" ng-value="group">{{ group.name }}</md-option>
+                                </md-select>
+                            </md-input-container>
+                            <md-button ng-click="deleteGroup()">Delete</md-button>
+                        </div>
+
+                        <!-- Group management -->
+                        <md-tabs md-dynamic-height ng-show="activeGroup">
+                            <md-tab label="Grouplist">
+                                <md-content class="md-padding" layout="column" flex-lg="50">
+                                    <md-button ng-click="studentForm = true" ng-show="!studentForm">Add</md-button>
+                                    <form ng-show="studentForm" name="addStudentForm">
+                                        <md-button ng-click="studentForm = false">Close</md-button>
+                                        <md-input-container>
+                                            <label>Surname</label>
+                                            <input type="text" name="surname" ng-model="newStudent.surname" md-minlength="3" md-maxlength="45" ng-pattern="/^[а-яА-Я]+$/" required>
+                                            <div ng-messages="addStudentForm.surname.$error">
+                                                <div ng-message="required">Required field.</div>
+                                                <div ng-message="md-maxlength">Too many characters.</div>
+                                                <div ng-message="pattern">Invaild symbols.</div>
+                                            </div>
+                                        </md-input-container>
+                                        <md-input-container>
+                                            <label>Name</label>
+                                            <input type="text" name="name" ng-model="newStudent.name" md-minlength="3" md-maxlength="45" ng-pattern="/^[а-яА-Я]+$/" required>
+                                            <div ng-messages="addStudentForm.name.$error">
+                                                <div ng-message="required">Required field.</div>
+                                                <div ng-message="md-maxlength">Too many characters.</div>
+                                                <div ng-message="pattern">Invaild symbols.</div>
+                                            </div>
+                                        </md-input-container>
+                                        <md-input-container>
+                                            <label>Lastname</label>
+                                            <input type="text" name="lastname" ng-model="newStudent.lastname" md-minlength="3" md-maxlength="45" ng-pattern="/^[а-яА-Я]+$/" required>
+                                            <div ng-messages="addStudentForm.lastname.$error">
+                                                <div ng-message="required">Required field.</div>
+                                                <div ng-message="md-maxlength">Too many characters.</div>
+                                                <div ng-message="pattern">Invaild symbols.</div>
+                                            </div>
+                                        </md-input-container>
+                                        <md-button class="md-raised" ng-click="addStudent()" ng-show="addStudentForm.$valid">Confirm</md-button>
+                                    </form>
+                                    <div ng-repeat="student in activeGroup.students" layout="row">
+                                        <div flex="25">{{ student.surname + ' ' + student.name + ' ' + student.lastname }} {{ student.id == activeGroup.presID ? "(pres)" : "" }}</div>
+                                        <div flex="15">{{ student.hash }}</div>
+                                        <div flex="10">{{ student.used | yesNo }}</div>
+                                        <div flex>
+                                            <md-button ng-click="deleteStudent(student)">Delete</md-button>
+                                            <md-button ng-click="setPresident(student)">Assign president</md-button>
+                                        </div>
+                                    </div>
+                                </md-content>
+                            </md-tab>
+                            <md-tab label="Program">
+                                <md-content class="md-padding">
+                                    <md-input-container>
+                                        <label>Semester</label>
+                                        <md-select ng-model="chosenSemester" ng-change="onSemesterSelect()">
+                                            <md-option ng-repeat = "semester in semesters" ng-value=" semester">{{ semester.startTimestamp | date }} - {{ semester.endTimestamp | date }}</md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                    <div ng-repeat="program in activeGroup.program" layout="row" layout-align="start center">
+                                        <div flex="30">{{ getSubjectName(program.subjectID) }}</div>
+                                        <div flex="30">{{ program.profName }}</div>
+                                        <div flex="10">{{ program.examType }}</div>
+                                        <div flex layout-align="start center">
+                                            <md-button ng-click="deleteProgram(program)">Delete</md-button>
+                                        </div>
+                                    </div>
+                                    <md-divider></md-divider>
+                                    <md-button ng-show="!programForm && chosenSemester" ng-click="programForm = true">New program</md-button>
+                                    <form ng-show="programForm" name="addProgramForm">
+                                        <md-button ng-click="programForm = false">Close</md-button>
+                                        <md-input-container>
+                                            <label>Subject</label>
+                                            <md-select name="subjectID" ng-model="newProgramNote.subjectID" required>
+                                                <md-option ng-repeat="subject in subjects" ng-value="subject.id" ng-if="!subjectInProgram(subject)">{{ subject.name }}</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                        <md-input-container>
+                                            <label>ExamType</label>
+                                            <md-select name="examType" ng-model="newProgramNote.examType" required>
+                                                <md-option value="exam">Exam</md-option>
+                                                <md-option value="pass">Pass</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                        <md-input-container>
+                                            <label>Assigned prof</label>
+                                            <md-select name="asgProf" ng-model="newProgramNote.prof" required>
+                                                <md-option ng-repeat="prof in profs" ng-value="prof">{{ prof.surname + " " + prof.name + " " + prof.lastname }}</md-option>
+                                            </md-select>
+                                        </md-input-container>
+                                        <md-button ng-show="addProgramForm.$valid" ng-click="addProgram()">Add</md-button>
+                                    </form>
+                                </md-content>
+                            </md-tab>
+                        </md-tabs>
+                </md-tab>
+            </md-tabs>
+        </md-content>
+    </md-tab>
+    <md-tab label="Subjects">
+        <md-content class="md-padding">
+            <md-button ng-show="!subjectForm" ng-click="subjectForm = true">New subject</md-button>
+            <form name="subjectAddForm" ng-show="subjectForm" layout="row">
+                <md-button ng-click="subjectForm = false">Close form</md-button>
+                <md-input-container class="md-block">
+                    <label>Name</label>
+                    <input type="text" name="name" ng-model="newSubject.name" md-minlength="3" md-maxlength="64" ng-pattern="/^[А-Я][а-я]+(\s[А-Я]*[а-я]*)*$/" required>
+                    <div ng-messages="subjectAddForm.name.$error">
+                        <div ng-message="required">Required field.</div>
+                        <div ng-message="md-minlength">3 or more characters.</div>
+                        <div ng-message="md-maxlength">64 or less characters.</div>
+                        <div ng-message="pattern">Invalid symbols.</div>
+                    </div>
+                </md-input-container>
+                <md-button ng-click="addSubject()" ng-show="subjectAddForm.$valid">Confirm</md-button>
+            </form>
+            <div ng-show="!subjectForm" layout="column">
+                <div ng-repeat="subject in subjects" layout="row">
+                    <div flex="40">{{ subject.name }}</div>
+                    <div flex="25">
+                        <md-button ng-click="deleteSubject(subject)">Delete</md-button>
+                    </div>
+                </div>
+            </div>
+        </md-content>
+    </md-tab>
+    <md-tab label="Rooms">
+        <md-content class="md-padding">
+            <md-button ng-show="!roomForm" ng-click="roomForm = true">New room</md-button>
+            <form name="addRoomForm" ng-show="roomForm">
+                <md-button ng-click="roomForm = false">Close</md-button>
+                <md-input-container>
+                    <label>Name</label>
+                    <input type="text" ng-model="newRoom.name" name="name" ng-pattern="/^([А-Я]\s)?[1-9][0-9]*[а-я]?$/" md-minlength="3" md-maxlength="8" required>
+                    <div ng-messages="roomForm.name.$error">
+                        <div ng-message="pattern">Invalid format.</div>
+                    </div>
+                </md-input-container>
+                <md-button ng-show="addRoomForm.$valid" click="addRoom()">Add</md-button>
+            </form>
+            <md-divider></md-divider>
+            <div layout="column">
+                <div ng-repeat="room in rooms" layout="row">
+                    <div flex="25">{{ room.name }}</div>
+                    <div layout-align="start center">
+                        <md-button ng-click="deleteRoom(room)">Delete</md-button>
+                    </div>
+                </div>
+            </div>
+        </md-content>
+    </md-tab>
+    <md-tab label="Semesters">
+        <md-content class="md-padding">
+            <md-button ng-show="!semesterForm" ng-click="semesterForm = true">New semester</md-button>
+            <form name="semesterAddForm" ng-show="semesterForm" layout="column" flex-lg="50" flex-md="80" flex>
+                <md-button ng-click="semesterForm = false">Close</md-button>
+                <md-input-container>
+                    <label>Year</label>
+                    <input type="number" min="2010" max="2020" name="year" ng-model="newSemester.year" required>
+                    <div ng-messages="semesterAddForm.year.$error">
+                        <div ng-message="required">Required field.</div>
+                    </div>
+                </md-input-container>
+                <md-input-container>
+                    <label>Season</label>
+                    <md-select name="season" ng-model="newSemester.season" required>
+                        <md-option value="autumn">Весна</md-option>
+                        <md-option value="spring">Осень</md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container>
+                    <label>Start</label>
+                    <input type="date" name="startTime" ng-model="newSemester.startTimestamp" required>
+                    <div ng-messages="semesterAddForm.startTime.$error">
+                        <div ng-message="required">Required field.</div>
+                    </div>
+                </md-input-container>
+                <md-input-container>
+                    <label>End</label>
+                    <input type="date" name="endTime" ng-model="newSemester.endTimestamp" required>
+                    <div ng-messages="semesterAddForm.endTime.$error">
+                        <div ng-message="required">Required field.</div>
+                    </div>
+                </md-input-container>
+                <md-button ng-show="semesterAddForm.$valid" ng-click="addSemester()">Add</md-button>
+            </form>
+            <div ng-show="!semesterForm" layout="column">
+                <div ng-repeat="semester in semesters" layout="row">
+                    <div flex="10">{{ semester.year }}</div>
+                    <div flex="15">{{ semester.season }}</div>
+                    <div flex="25" layout="column">
+                        <div flex>from: {{ semester.startTimestamp | date }}</div>
+                        <div flex>to: {{ semester.endTimestamp | date }}</div>
+                    </div>
+                    <div flex="20">
+                        <md-button ng-click="deleteSemester(semester)">Delete</md-button>
+                    </div>
+                </div>
+            </div>
+        </md-content>
+    </md-tab>
+    <md-tab label="Schedule">
+        <md-content class="md-padding">
+            <form name="filterForm">
+                <md-input-container>
+                    <label>Semester</label>
+                    <md-select name="chosenSemester" ng-model="scheduleFilter.semester">
+                        <md-option ng-repeat = "semester in semesters" ng-value="semester">{{ semester.startTimestamp | date }} - {{ semester.endTimestamp | date }}</md-option>
+                    </md-select>
+                </md-input-container>
+            </form>
+            <md-divider></md-divider>
+            <div ng-show="scheduleFilter.semester">
+                <md-button ng-show="!ruleForm" ng-click="addNewRule()">New rule</md-button>
+                <form name="addRuleForm" ng-show="ruleForm">
+                    <md-button ng-click="ruleForm = false">Close</md-button>
+                    <md-input-container>
+                        <label>Day</label>
+                        <md-select name="weekDay" ng-model="newRule.weekDay" ng-change="resetClasses()" required>
+                            <md-option value="1">Monday</md-option>
+                            <md-option value="2">Tuesday</md-option>
+                            <md-option value="3">Wednesday</md-option>
+                            <md-option value="4">Thursday</md-option>
+                            <md-option value="5">Friday</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Time</label>
+                        <md-select name="order" ng-model="newRule.order" ng-change="resetClasses()" required>
+                            <md-option ng-repeat="note in orderTimes" ng-value="note.order">{{ note.time }}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Week</label>
+                        <md-select name="weekType" ng-model="newRule.weekType" ng-change="resetClasses()" required>
+                            <md-option value="11">each 4 starting with 1st</md-option>
+                            <md-option value="12">each 4 starting with 2nd</md-option>
+                            <md-option value="13">each 4 starting with 3rd</md-option>
+                            <md-option value="14">each 4 starting with 4th</md-option>
+                            <md-option value="2">even</md-option>
+                            <md-option value="3">odd</md-option>
+                            <md-option value="4">any</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-divider></md-divider>
+                    <h3>Dates</h3>
+                    <div layout="row" layout-wrap>
+                        <div ng-repeat="classDate in newRule.classes" layout-padding>{{ classDate | date : 'd MMM, HH:mm' }}</div>
+                    </div>
+                    <md-divider></md-divider>
+                    <md-input-container>
+                        <label>Subject</label>
+                        <md-select name="subject" ng-model="newRule.subject" ng-change="onRuleSubjectChanged()" required>
+                            <md-option ng-repeat="subject in subjects" ng-value="subject">{{ subject.name }}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Type</label>
+                        <md-select name="classType" ng-model="newRule.classType" required>
+                            <md-option value="lection">Lection</md-option>
+                            <md-option value="lab">Lab</md-option>
+                            <md-option value="activity">Activity</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Subgroup</label>
+                        <md-select name="subgroup" ng-model="newRule.subgroup">
+                            <md-option value="">None</md-option>
+                            <md-option value="1">1</md-option>
+                            <md-option value="2">2</md-option>
+                            <md-option value="3">3</md-option>
+                            <md-option value="4">4</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-divider></md-divider>
+                    <div layout="row">
+                        <div flex="33" layout="column">
+                            <div layout="row">
+                                <md-input-container>
+                                    <label>Groups</label>
+                                    <md-select ng-model="chosenGroup">
+                                        <md-option ng-repeat="group in groups" ng-if="!( newRule.groups | contains:group)" ng-value="group">{{ group.name }}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-button ng-click="appendGroupToRule()" ng-show="chosenGroup">Add</md-button>
+                            </div>
+                            <md-divider></md-divider>
+                            <div ng-repeat="group in newRule.groups" layout="row">
+                                <div flex="60">{{ group.name }}</div>
+                                <div flex><md-button ng-click="removeGroupFromList(group)">Remove</md-button></div>
+                            </div>
+                        </div>
+                        <md-divider></md-divider>
+                        <div flex="33" layout="column">
+                            <div layout="row">
+                                <md-input-container>
+                                    <label>Profs</label>
+                                    <md-select ng-model="chosenProf">
+                                        <md-option ng-repeat="prof in profs" ng-if="!(newRule.profs | contains:prof)" ng-value="prof">{{ prof.surname + ' ' + prof.name + ' ' + prof.lastname }}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-button ng-click="appendProfToRule()" ng-show="chosenProf">Add</md-button>
+                            </div>
+                            <md-divider></md-divider>
+                            <div ng-repeat="prof in newRule.profs" layout="row">
+                                <div flex="60">{{ prof.surname + ' ' + prof.name + ' ' + prof.lastname }}</div>
+                                <div flex><md-button ng-click="removeProfFromList(prof)">Remove</md-button></div>
+                            </div>
+                        </div>
+                        <md-divider></md-divider>
+                        <div flex="33" layout="column">
+                            <div layout="row">
+                                <md-input-container>
+                                    <label>Rooms</label>
+                                    <md-select name="chosenRoom" ng-model="chosenRoom">
+                                        <md-option ng-repeat="room in rooms" ng-if="!(newRule.rooms | contains:room)" ng-value="room">{{ room.name }}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                                <md-button ng-click="appendRoomToRule()" ng-show="chosenRoom">Add</md-button>
+                            </div>
+                            <md-divider></md-divider>
+                            <div ng-repeat="room in newRule.rooms" layout="row">
+                                <div flex="60">{{ room.name }}</div>
+                                <div flex><md-button ng-click="removeRoomFromList(room)">Remove</md-button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <md-button ng-show="addRuleForm.$valid" ng-click="addRule()">Confirm</md-button>
+                </form>
+                <md-divider></md-divider>
+                <div ng-show="!ruleForm">
+                    <p>Rules filter.</p>
+                    <md-input-container>
+                        <label>Subject</label>
+                        <md-select ng-model="scheduleFilter.subject">
+                            <md-option ng-repeat="subject in subjects" ng-value="subject">{{ subject.name }}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-button ng-click="getRules()" ng-show="scheduleFilter.subject">Display</md-button>
+                    <md-divider></md-divider>
+                    <div layout="column">
+                        <div ng-repeat="rule in rulesSelection" layout="row">
+                            <div flex="25">
+                                <p>Time: {{ rule.order }}</p>
+                                <p>WeekDay: {{ rule.weekDay }}</p>
+                                <p>WeekType: {{ rule.weekType }}</p>
+                            </div>
+                            <div flex="20" layout="column">
+                                <div ng-repeat="room in rule.rooms">{{ room.name }}</div>
+                            </div>
+                            <div flex="20" layout="column">
+                                <div ng-repeat="group in rule.groups">{{ group.name }}</div>
+                            </div>
+                            <div flex="20" layout="column">
+                                <div ng-repeat="prof in rule.profs">{{ prof.name }}</div>
+                            </div>
+                            <div flex>
+                                <md-button ng-click="modifyRule(rule)">Change</md-button>
+                                <md-button ng-click="deleteRule(rule)">Delete</md-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </md-content>
+    </md-tab>
+</md-tabs>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Helper</title>
+    <script>
+        if (location.protocol == 'http:'){
+            console.debug('redirecting to https');
+            window.location = 'https:'+location.href.substr(5);
+        }
+    </script>
+    
+    <!-- JQuery --> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    
+    <!-- Fonts -->
+    
+    <!-- Cookie --> 
+    <script src="js/jcookie/src/jquery.cookie.js"></script> 
+    
+    <!-- Socket.IO --> 
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    
+    <!-- Clipboard.js -->
+    <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.8/clipboard.min.js"></script>
+    
+    <!-- AngularJS -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+    <script src="js/angularjs/angular-ui-router.js"></script>
+    <script src="js/angularjs/config.js"></script>
+    
+    <!-- Stylesheets -->
+</head>
+    
+<body ng-app="websiteApp">
+    <md-content ui-view="header"></md-content>
+    <md-content ui-view="body">
+        <div ui-view="main"></div>
+        <div ui-view="login"></div>
+        <div ui-view="register"></div>
+        <div ui-view="adminPC"></div>
+        <div ui-view="managerPC"></div>
+        <div ui-view="studentPC"></div>
+    </md-content>
+    <md-content ui-view="footer"></md-content>
+</body>
+</html>

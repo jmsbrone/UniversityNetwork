@@ -1,0 +1,15 @@
+RewriteEngine On
+RewriteRule ^(.*)/+$ $1 [R=301,L]
+
+RewriteBase /
+
+# To externally redirect /dir/file.php to /dir/file
+RewriteCond %{THE_REQUEST} \s/+(.*?/)?(?:index)?(.*?)\.php[\s?] [NC]
+RewriteRule ^ %1%2 [R=302,L,NE]
+
+# To internally forward /dir/file to /dir/file.php
+RewriteCond %{DOCUMENT_ROOT}/$1\.php -f
+RewriteRule ^(.+?)/?$ $1.php [L]
+
+ErrorDocument 404 /errors/404.html
+ErrorDocument 403 /errors/403.html
