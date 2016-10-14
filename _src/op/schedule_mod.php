@@ -75,6 +75,7 @@ switch($data['type']){
             $startTime = $mysql->query("SELECT `startTimestamp` FROM `semester` WHERE `id`={$_SESSION['semesterID']}")->fetch_row()[0];
             foreach($rules as $ruleID){
                 $rule = $mysql->query("SELECT `ClassType` as `classType`, `SubgroupIndex` as `subgroup`, `Subjects_ID` as `subjectID` FROM `rulesList` WHERE `id` = $ruleID")->fetch_assoc();
+                $rule['subjectName'] = $mysql->query("SELECT `name` From `subjects` WHERE `id` = {$rule['subjectID']}")->fetch_row()[0];
                 
                 $classes = array();
                 $result = $mysql->query("SELECT `ID` as `id`, UNIX_TIMESTAMP(`StartTime`) as `startTimestamp` FROM `classes` WHERE `classrules_id` = $ruleID AND `startTime` > '$startTime'");
@@ -96,7 +97,7 @@ switch($data['type']){
                     WHERE `id` IN (
                         SELECT DISTINCT `{$table}_id`
                         FROM `rulesList`
-                        WHERE `Groups_id` = $groupID
+                        WHERE `id` = $ruleID
                     )";
                     $result = $mysql->query($query);
                     if (!$result) throw403();

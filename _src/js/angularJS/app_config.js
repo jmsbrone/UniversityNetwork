@@ -1,8 +1,11 @@
 // Подключение AngularJS с библиотеками
-var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages']);
+var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages', 'angular-loading-bar', 'ngAnimate']);
 
 // Путь к моделям маршрутизатора.
 var viewFolder = 'ui.router/views/';
+app.config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+    cfpLoadingBarProvider.latencyThreshold = 25;
+}]);
 // Настройка маршрутизатора
 app.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/main');

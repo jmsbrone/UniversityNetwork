@@ -425,7 +425,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     // Rooms.
     $scope.addRoom = function(){
         api.get('room_mod', 'add', {
-            location: $scope.newRoom.location
+            name: $scope.newRoom.name
         }).then(function(response){
             console.debug(response);
             $scope.rooms.push(response.data);
@@ -436,9 +436,11 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.deleteRoom = function(room){
-        api.get('room_mod', 'list', {}).then(function(response){
+        api.get('room_mod', 'delete', {
+            roomID: room.id
+        }).then(function(response){
             console.debug(response);
-            
+            $scope.rooms = flib.eject($scope.rooms, room);
         }, function(response){
             console.debug(response);
         });
