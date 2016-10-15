@@ -197,6 +197,7 @@ $data = array_merge($_GET, $_POST);
 $accountMask = $_SESSION['accountMask'] ?? 1;
 $groupID = $_SESSION['groupID'];
 $accountType = $_SESSION['accountType'];
+$userID = $_SESSION['userID'];
 
 if (($requestMasks[$type] & $accountMask) == 0) {
     trigger_error('invalid mask');

@@ -52,6 +52,9 @@ switch($data['type']){
             $mysql->query("UPDATE `Invites` SET `Used` = TRUE WHERE `Hash` LIKE '$hash'");
             $output = array();
         } else throw403();
+        
+        $data['type'] = 'login';
+        require "auth_req.php";
         break;
     case 'modify':
         $studentID = checkInt($data['studentID']);

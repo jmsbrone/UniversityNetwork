@@ -1,6 +1,6 @@
 <div layout="column">
     <div layout="row">
-        <div flex="30" flex-md="25" flex-lg="20" flex-xl="15" id="main-menu" layout="column" ng-controller="studentMenuController" stretch-down>
+        <div flex="nogrow" style="min-width: 250px;" id="main-menu" layout="column" ng-controller="studentMenuController" stretch-down>
             <div layout="row" ng-repeat="item in menuItems">
                 <div flex class="menu-item {{ activeMenuItem == item ? 'menu-item-active' : '' }}" ng-click="setActiveItem(item)">
                     <md-icon md-svg-icon="images/icons/{{ item.icon }}.svg"></md-icon>    {{ item.text }}
@@ -17,13 +17,13 @@
             </div>
             <div class="filler" flex></div>
         </div>
-        <div flex layout="column">
+        <div layout="column">
             <div ui-view="profile"></div>
             <div ui-view="news"></div>
             <div ui-view="group"></div>
             <div ui-view="schedule"></div>
             <div ui-view="subjects"></div>
         </div>
-        <div flex="15" hide show-gt-md></div>
+        <div flex hide show-gt-md></div>
     </div>
 </div>

@@ -1,0 +1,64 @@
+$odd: #dbdbdb;
+$oddMain: #c6e0b4;
+$oddFocused: #e4feb4;
+
+$even: #ededed;
+$evenMain: #e2efda;
+$evenFocused: #ecffcd;
+
+$min-height: 25px;
+$min-width: 75px;
+
+$cellPadding: 5px;
+
+.schedule-color {
+    &:nth-child(odd){
+        background-color: $odd;
+        
+        &>.schedule-cell:first-child {
+            background-color: $oddMain;
+        }
+        &>.schedule-cell-active {
+            background: $oddFocused;
+        }
+    }
+    &:nth-child(even){
+        background-color: $even;
+        
+        &>.schedule-cell:first-child {
+            background-color: $evenMain;
+        }
+        &>.schedule-cell-active {
+            background: $evenFocused;
+        }
+    }
+    
+    .schedule-cell {
+        min-height : $min-height;
+        
+        @media screen and (min-width: 720px){
+            min-width: $min-width;
+        }
+        @media screen and (min-width: 1600px){
+            min-width: 100px;
+        }
+        
+        text-align: center;
+    }
+    .schedule-header {
+        background: #e2efda;
+        
+        &.schedule-cell-active {
+            background: #c6e0b4 !important;
+        }
+    }
+    
+    .blank-cell {
+        background: white !important;
+    }
+    
+    label {
+        font-weight: 600;
+        margin: 2px;
+    }
+}

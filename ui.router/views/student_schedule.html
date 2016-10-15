@@ -5,8 +5,7 @@
         <div flex="5"></div>
     </div>
     <div layout="row">
-        <div flex="5"></div>
-        <div flex layout="column" style="border: 1px solid black;">
+        <div flex flex-offset-gt-md="5" layout="column" style="border: 1px solid black;">
             <div layout="row" layout-align="center stretch" class="schedule-color">
                 <div class="schedule-cell blank-cell"></div>
                 <div class="schedule-cell schedule-header {{ activeDay == (d.getDay() - 1) ? 'schedule-cell-active' : '' }}" ng-repeat="d in dates" flex layout-align="center center">
@@ -28,6 +27,5 @@
                 </div>
             </div>
         </div>
-        <div flex="5"></div>
     </div>
 </div>

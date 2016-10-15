@@ -1,0 +1,81 @@
+// Menu.
+$menu-item-height: 50px;
+$menu-item-min-width: 100px;
+
+// Triangle pointer.
+$triangle-width: 20px;
+$triangleHeight: $menu-item-height;
+$triangleOffsetLeft: 5px;
+$triangleMarginLeft: $triangleOffsetLeft;
+$triangleOffsetTop: 4px;
+$triangleMarginTop: -($triangleHeight/2 - $triangleOffsetTop);
+
+// Colors.
+$menuActiveBackground: lightgrey;
+$backgroundPrimaryColor: white;
+$triangleShadow: black;
+$triangleInsetColor: $backgroundPrimaryColor;
+
+// Borders.
+$menuBorder: 1px solid black;
+
+// ----- Mixins ----
+
+@mixin triangle($width, $height, $color){
+    width: 0;
+    height: 0;
+    border-top: $height/2 solid transparent;
+    border-bottom: $height/2 solid transparent;
+    border-right: $width solid $color;
+}
+@mixin noBorder(){
+    border-left: 0px;
+    border-right: 0px;
+    border-top: 0px;
+    border-bottom: 0px;
+}
+
+// ------ Rules ----
+
+.menu-pointer {
+    @include triangle($triangle-width, $triangleHeight, $triangleShadow);
+    background-color: $menuActiveBackground;
+}
+.menu-pointer-inset{
+    @include triangle($triangle-width - 2, $triangleHeight - 2, $triangleInsetColor);
+    
+    margin-left: $triangleMarginLeft;
+    margin-top: $triangleMarginTop;
+}
+.menu-pointer-hidden {
+    @include noBorder();
+    width: $triangleHeight / 2;
+    background: $backgroundPrimaryColor;
+    border-right: $menuBorder;
+    padding-top: $triangleHeight / 2;
+    height: $triangleHeight / 2;
+}
+.menu-pointer-hide .menu-pointer-inset {
+    @include noBorder();
+}
+.menu-item-active {
+    background: $menuActiveBackground;
+}
+.menu-item {
+    height: $menu-item-height;
+    min-width: $menu-item-min-width;
+    padding-left: 25%;
+    line-height: $menu-item-height;
+    font-weight: 600;
+    cursor: pointer;
+    
+    &:focus{
+        outline: none;
+    }
+}
+.filler, #search-box {
+    border-right: $menuBorder;
+}
+#main-menu > *{
+    margin: 0px;
+}
