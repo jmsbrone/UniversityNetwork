@@ -15,13 +15,16 @@
 					throw403("Invalid range of integer"); 
 				} else {
 						return $var;
-				};
+				}
 				
-			}else {
+			}
+			else {
 					throw403("No Data");
 			}
 			
-		}else {throw403("leftborder>rightborder");}
+		}else {
+			throw403("leftborder>rightborder");
+		}
 	}
 	/*******************************************
 	function check_str_eng
