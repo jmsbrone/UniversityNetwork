@@ -1,5 +1,4 @@
-﻿<?php 
-	switch ($data['type']){
+﻿<?php switch ($data['type']){
 		case 'add':
 			$mark = check_str($data['mark']);
 			$studentID = checkInt($data['studentID']);
@@ -10,13 +9,12 @@
 						VALUES ($studentID, $programID, $profID, '$mark',CURRENT_TIMESTAMP);";
 				if($mysql->query($query)) {
 					$output = array('ID' => $mysql->insert_id, 'studentID' => $studentID, 'programID' => $programID, 'profID' => $profID, 'mark' => $mark);
-				} 
-							
+				} 			
 				else 	{
 					throw403();
 				};
 			break;
-				
+		
 		case 'list':
 			$studentID = checkInt($data['studentID']);
 			$query = "SELECT `ID`, `Programs_ID`, `Profs_ID`, `Mark` 
@@ -37,7 +35,8 @@
 			} else {
 				throw403();
 			} 	
-			break;						
+			break;	
+		
 		case 'delete':
 			$noteID = checkInt($data['noteID']);
 			$query = "DELETE FROM `StudentResults` WHERE `ID` = $noteID;
