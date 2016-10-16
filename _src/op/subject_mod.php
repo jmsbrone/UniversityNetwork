@@ -1,6 +1,6 @@
 ﻿<?php 
-	switch ($data['type']){
-		case 'add':
+switch ($data['type']){
+	case 'add':
 		$name = check_str($data['name']);
 		$query = "INSERT INTO `Subjects` (`Name`,`Modified`) VALUES ('$name',CURRENT_TIMESTAMP);";	
 			if($mysql->query($query)) {
@@ -11,7 +11,7 @@
 			};
 		break;
 
-		case 'list':
+	case 'list':
 		$query = "SELECT `ID`, `Name` FROM `Subjects`;";
 		if ($result = $mysql->query($query)) {	
 			$output = array();
@@ -30,7 +30,7 @@
 			} 	
 		break;
 		
-		case 'modify':
+	case 'modify':
 		$name=check_str($data['name']);
 		$subjectID = checkInt($data['subjectID']);
 		$query = "-- Изменение данных предмета
@@ -39,18 +39,20 @@
 		WHERE `ID` = $subjectID;";	
 			if(!($mysql->query($query))) {
 				throw403();
-				} 
+			} 
 			else {
 				$output = array('id' => $mysql->insert_id, 'name' => $name);
 			}
 		break;
 
-		case 'delete': 
+	case 'delete': 
 		$subjectID = checkInt($data['subjectID']);
 		$query = "DELETE FROM `Subjects` WHERE `ID` = $subjectID;
 		INSERT INTO `dellog` (`Text`, `ID`) VALUES ('subject', $subjectID);";
 		(runmultiquery($query)); 
-		$output = array('id' =>$subjectID);
+		$output = array(
+			'id' =>$subjectID
+		);
 		break;
-	}
+}
 ?>
