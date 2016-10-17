@@ -21,11 +21,11 @@
 					$output = array();
 					while ($row = $result->fetch_row())  {
 						$output[] = array(
-						'id' => $row[0],
-						'year' => $row[1],
-						'season' => $row[2], 
-						'startTimestamp' =>$row[3],
-					'	endTimestamp' =>$row[4], 
+                            'id' => $row[0],
+                            'year' => $row[1],
+                            'season' => $row[2],
+                            'startTimestamp' =>$row[3],
+                            'endTimestamp' =>$row[4], 
 						);	
 					 };				
 					 /* очищаем результирующий набор */

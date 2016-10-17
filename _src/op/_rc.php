@@ -87,9 +87,6 @@ $start_exec_time = microtime(true);
 $start_memory_usage = memory_get_usage();
 session_start();
 
-# Configuraion of MySQL. Connects to database and creates $mysql variable.
-require_once "db_connect.php.dsf";
-
 #########################################################################
 # Setup.
 #
@@ -205,6 +202,10 @@ if (($requestMasks[$type] & $accountMask) == 0) {
 }
 
 # At this point request is authorized.
+# Configuraion of MySQL. Connects to database and creates $mysql variable.
+require_once "db_connect.php.dsf";
+
+
 if ($update){
     switch($accountType){
         case 'admin':
@@ -272,6 +273,9 @@ if ($update){
 # Request is completed.
 
 $_SESSION['lastTimestamp'] = time();
+
+$mysql->close();
+
 $end_exec_time = microtime(true);
 $end_memory_usage = memory_get_usage();
 $peak_memory = memory_get_peak_usage();

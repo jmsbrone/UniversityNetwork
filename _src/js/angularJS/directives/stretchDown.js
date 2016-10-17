@@ -11,7 +11,6 @@ app.directive('stretchDown', ['$timeout', function($timeout){
                 var pageHeight = $('md-content[ui-view="header"]').height() + $('md-content[ui-view="body"]').height();
                 var viewHeight = $(window).height();
                 
-                console.debug('page height: ' + pageHeight + ' - window:' + viewHeight);
                 var newHeight = (viewHeight > pageHeight ? viewHeight : pageHeight)- $(elem).offset().top;
                 $(elem).height(newHeight);
             }

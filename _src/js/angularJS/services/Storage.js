@@ -1,6 +1,22 @@
 app.service('storage', ['api', function(api){
     var obj = {
-        semester: null
+        semester: null,
+        getWeek: function(from){
+            if (!from) {
+                now = new Date();
+            } else {
+                now = new Date(from.valueOf());
+            }
+            
+            var start_day = new Date(this.semester.startTimestamp.valueOf());
+            start_day.setDate(start_day.getDate() - start_day.getDay() + 1);
+            now.setDate(now.getDate() - (now.getDay() == 0 ? 7 : now.getDay()) + 1);
+            now.setHours(0);
+            now.setMinutes(0);
+            now.setSeconds(0);
+            now.setMilliseconds(0);
+            return (now.valueOf() - start_day.valueOf()) / (1000 * 3600 * 24 * 7) + 1;
+        }
     };
     api.get('semester_mod', 'list',{}).then(function(response){
         console.debug(response);
@@ -15,11 +31,7 @@ app.service('storage', ['api', function(api){
             }
         }
         if (!obj.semester) return;
-        var start_day = new Date(obj.semester.startTimestamp.valueOf());
-        start_day.setDate(start_day.getDate() - start_day.getDay());
-        now.setDate(now.getDate() - now.getDay());
-        obj.currentWeek = Math.ceil((now.valueOf() - start_day.valueOf()) / (1000 * 3600 * 24 * 7));
-        console.debug('current week is ' + obj.currentWeek);
+        obj.currentWeek = obj.getWeek();
     }, function(response){
         console.debug(response);
     });

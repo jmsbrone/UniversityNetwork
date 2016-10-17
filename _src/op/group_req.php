@@ -8,19 +8,18 @@ switch($data['type']){
         $semesterID = checkInt($data['semesterID']);
         
         $query = "
-            -- Выбор списка предметов группы 
-            SELECT `ID`, `Subjects_ID`, `ExamType`, `HasSubgroupDivision`
-            FROM `GroupSemesterProgram`
-            WHERE `Groups_ID` = $groupID AND `Semester_ID` = $semesterID;";
+            SELECT `groupsemesterprogram`.`ID`, `subjects`.`id`, `subjects`.`name`, `ExamType`
+            FROM `GroupSemesterProgram` INNER JOIN `subjects` ON `subjects`.`id` = `groupSemesterProgram`.`subjects_id`
+            WHERE `Groups_ID` = $groupID AND `Semester_ID` = $semesterID";
         
         if ($result = $mysql->query($query)){
             $output = array();
             while($row = $result->fetch_row()){
                 $output[] = array(
-                    'programID' => $row[0],
+                    'id' => $row[0],
                     'subjectID' => $row[1],
-                    'examType' => $row[2],
-                    'subDivision' => $row[3]
+                    'subjectName' => $row[2],
+                    'examType' => $row[3]
                 );
             }
         } else throw403();

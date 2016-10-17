@@ -1,7 +1,7 @@
 <div layout="column">
     <div layout="row" layout-align="center center">
         <h1 style="text-align: center;" flex> {{ week }} неделя </h1>
-        <md-datepicker style="margin-left: -203px;" ng-model="selectedDate" md-placeholder="Enter date" md-min-date="semester.startTimestamp" md-max-date="semester.endTimestamp"></md-datepicker>
+        <md-datepicker style="margin-left: -203px;" ng-model="selectedDate" md-placeholder="Enter date" md-min-date="semester.startTimestamp" md-max-date="semester.endTimestamp" md-date-filter="disabledWeekendsPredicate"></md-datepicker>
         <div flex="5"></div>
     </div>
     <div layout="row">
