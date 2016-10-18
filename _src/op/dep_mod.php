@@ -3,7 +3,7 @@ switch ($data['type']){
 	case 'add':
 		$name = check_str($data['name']);
 		$query = "INSERT INTO `Departments` (`Name`)
-		VALUES ('$name');";		
+			VALUES ('$name');";		
 		if($mysql->query($query)) {
 			$output = array('id' => $mysql->insert_id, 'name' => $name);
 		} 			
@@ -19,8 +19,8 @@ switch ($data['type']){
 			$output = array();
 			while ($row = $result->fetch_row())  {
 				$output[] = array(
-				'id' => $row[0],
-				'name' => $row[1] 
+					'id' => $row[0],
+					'name' => $row[1] 
 				);						
 			}								
 		} 	
@@ -36,7 +36,7 @@ switch ($data['type']){
 			SET `name` = '$new_name' , `Modified` = CURRENT_TIMESTAMP 
 			WHERE `id` = $ID;";							
 		if(!($mysql->query($query))) {								
-				throw403();
+			throw403();
 		} 
 		$output = array('id' => $ID, 'name' => $new_name);								
 		break;
