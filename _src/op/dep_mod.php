@@ -42,12 +42,12 @@ switch ($data['type']){
 		break;
 				
 				
-		case 'delete':
-			$ID = checkInt($data['depID']);
-			$query = "DELETE FROM `departments` WHERE `departments`.`ID` = $ID;
+	case 'delete':
+		$ID = checkInt($data['depID']);
+		$query = "DELETE FROM `departments` WHERE `departments`.`ID` = $ID;
 			INSERT INTO `dellog` (`Text`, `ID`) VALUES ('dep', $ID);";
-			runMultiQuery($query); 					
-				$output = array('id' =>$ID);						
-			break;	 
-	}
+		runMultiQuery($query); 					
+		$output = array('id' =>$ID);						
+		break;	 
+}
 		?>
