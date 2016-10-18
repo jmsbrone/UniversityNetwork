@@ -1,6 +1,6 @@
 <div layout="column">
     <div layout="row">
-        <div flex="nogrow" style="min-width: 250px;" id="main-menu" layout="column" ng-controller="studentMenuController" stretch-down>
+        <div flex="none" style="width: 250px;" id="main-menu" layout="column" ng-controller="studentMenuController" stretch-down>
             <div layout="row" ng-repeat="item in menuItems">
                 <div flex class="menu-item {{ activeMenuItem == item ? 'menu-item-active' : '' }}" ng-click="setActiveItem(item)">
                     <md-icon md-svg-icon="images/icons/{{ item.icon }}.svg"></md-icon>    {{ item.text }}

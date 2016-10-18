@@ -32,8 +32,17 @@ app.service('storage', ['api', function(api){
         }
         if (!obj.semester) return;
         obj.currentWeek = obj.getWeek();
+        api.get('group_req','subject_list', {
+            semesterID: obj.semester.id
+        }).then(function(response){
+            console.debug(response);
+            obj.program = response.data;
+        }, function(response){
+            console.debug(response);
+        });
     }, function(response){
         console.debug(response);
     });
+   
     return obj;
 }]);

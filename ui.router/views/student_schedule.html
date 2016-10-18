@@ -17,7 +17,7 @@
                     <p>{{ times[order] }}</p>
                 </div>
                 <div ng-repeat="day in [0,1,2,3,4] track by $index" class="schedule-cell {{ activeDay == day ? 'schedule-cell-active' : '' }}" flex>
-                    <div layout="column" ng-show="classes[day][order]" layout-padding>
+                    <div layout="column" ng-show="checkSubgroup(classes[day][order])" layout-padding>
                         <div>
                             <div><b>{{ getClassType(classes[day][order]) + ' ' + classes[day][order].subjectName }} {{ classes[day][order].subgroup ? ('(' + classes[day][order].subgroup + ')') : '' }}</b></div>
                             <div>{{ getProfName(day, order) }}</div>

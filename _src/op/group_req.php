@@ -8,19 +8,37 @@ switch($data['type']){
         $semesterID = checkInt($data['semesterID']);
         
         $query = "
-            SELECT `groupsemesterprogram`.`ID`, `subjects`.`id`, `subjects`.`name`, `ExamType`
-            FROM `GroupSemesterProgram` INNER JOIN `subjects` ON `subjects`.`id` = `groupSemesterProgram`.`subjects_id`
-            WHERE `Groups_ID` = $groupID AND `Semester_ID` = $semesterID";
+            SELECT
+                `groupProgram`.*,
+                `subgroup`.`students_id` AS `studentID`,
+                `subgroup`.`index` AS `subgroup`
+            FROM
+                (SELECT 
+                    `program`.`id` AS `id`,
+                    `subjects`.`id` AS `subjectID`,
+                    `subjects`.`name` AS `subjectName`,
+                    `profs`.`surname` AS `profSurname`,
+                    `profs`.`name` AS `profName`,
+                    `profs`.`lastname` AS `profLastname`,
+                    `program`.`groups_id` AS `groupID`,
+                    `program`.`semester_id` as `semesterID`
+                FROM
+                    (`GroupSemesterProgram` AS `program`
+                INNER JOIN `profs` ON `profs`.`id` = `program`.`profs_id`)
+                INNER JOIN `subjects` ON `program`.`subjects_id` = `subjects`.`id`
+                WHERE
+                    `program`.`groups_id` = 1) AS `groupProgram`
+                    LEFT JOIN
+                `SUbgroupStudent` AS `subgroup` ON `subgroup`.`program_id` = `groupProgram`.`id`
+            WHERE
+                `groupProgram`.`semesterID` = $semesterID
+                    AND (`subgroup`.`students_id` = $userID
+                    OR `groupProgram`.`groupID` = $groupID)";
         
         if ($result = $mysql->query($query)){
             $output = array();
-            while($row = $result->fetch_row()){
-                $output[] = array(
-                    'id' => $row[0],
-                    'subjectID' => $row[1],
-                    'subjectName' => $row[2],
-                    'examType' => $row[3]
-                );
+            while($row = $result->fetch_assoc()){
+                $output[] = $row;
             }
         } else throw403();
         break;

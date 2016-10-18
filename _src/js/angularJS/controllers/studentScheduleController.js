@@ -3,6 +3,10 @@ app.controller('studentScheduleController', ['$scope', 'api', 'flib', 'storage',
     $scope.selectedDate = new Date();
     
     function updateFn(){
+        if (!storage.program){
+            $timeout(updateFn, 500);
+            return;
+        }
         api.get('schedule_mod', 'list', {}).then(function(response){
             console.debug('schedule list');
             console.debug(response);
@@ -27,12 +31,25 @@ app.controller('studentScheduleController', ['$scope', 'api', 'flib', 'storage',
 
             for(i=0; i< $scope.rules.length; ++i){
                 var rule = $scope.rules[i];
+                var validRule = true;
+                for(k=0;k<storage.program.length;++k){
+                    if (storage.program[k].subjectID == rule.subjectID){
+                        // Subgroup not set for user
+                        if (!storage.program[k].subgroup || !rule.subgroup) break;
+                        // Subgroup differs for user
+                        if (storage.program[k].subgroup != rule.subgroup) {
+                            validRule = false;
+                        }
+                        break;
+                    }
+                }
+                if (!validRule) continue;
                 for(k=0; k < rule.classes.length; ++k){
                     var classTime = rule.classes[k].startTimestamp = flib.timestampToDate(rule.classes[k].startTimestamp);
                     if (classTime >= weekStart && classTime < weekEnd){
                         var order = classTime.getHours() / 2 - 4;
                         var wday = classTime.getDay() - 1;
-
+                        
                         classes[wday][order] = rule;
                     }
                 }
@@ -91,10 +108,23 @@ app.controller('studentScheduleController', ['$scope', 'api', 'flib', 'storage',
         updateFn();
     });
     
-    updateFn();
+    $timeout(updateFn, 500);
     
     $scope.disabledWeekendsPredicate = function(date){
         var day = date.getDay();
         return day != 0 && day != 6;
+    }
+    
+    $scope.checkSubgroup = function(rule){
+        if (!rule) return false;
+        if (!rule.subgroup) return true;
+        if (!storage.program) return true;
+        for(i=0;i<storage.program.length;++i){
+            if (storage.program[i].subjectID == rule.subjectID){
+                if (storage.program[i].subgroup == rule.subgroup) return true;
+                return false;
+            }
+        }
+        return false;
     }
 }]);

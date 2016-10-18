@@ -44,4 +44,14 @@ app.controller('studentMenuController', ['$scope', '$state', function($scope, $s
             }
         }
     }
+    
+    $(window).scroll(function(){
+        var menu = $('#main-menu');
+        var diff = window.pageYOffset - menu.offset().top;
+        menu.animate({
+            'padding-top': diff > 0 ? diff : 0
+        }, 25, function(){
+            console.debug('complete');
+        });
+    });
 }]);

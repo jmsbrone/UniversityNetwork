@@ -197,8 +197,8 @@ $accountType = $_SESSION['accountType'];
 $userID = $_SESSION['userID'];
 
 if (($requestMasks[$type] & $accountMask) == 0) {
-    trigger_error('invalid mask');
-    throw403("Denied for {$_SESSION['id']} mask=$accountMask type=$type requestmask={$requestMasks[$type]}.");
+    trigger_error("invalid mask: Denied for {$_SESSION['id']} mask=$accountMask type=$type requestmask={$requestMasks[$type]}.");
+    throw403();
 }
 
 # At this point request is authorized.
