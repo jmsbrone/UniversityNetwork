@@ -1,12 +1,12 @@
 <?php switch ($data['type']){
-	case 'add':
-		$name = check_str($data['name']);
-		$surname = check_str($data['surname']);
-		$lastname = check_str($data['lastname']);
-		$depID = checkInt($data['depID']);
+	case 'add': // добавление
+		$name = check_str($data['name']); // взятие имени из data
+		$surname = check_str($data['surname']);// взятие фамилии из data
+		$lastname = check_str($data['lastname']);// взятие отчества из data
+		$depID = checkInt($data['depID']);// взятие кафедры ID из data
 		$query = "-- Добавление преподавателя
 			INSERT INTO `Profs` (`Surname`, `Name`, `Lastname`, `Departments_ID`,`Modified`)
-			VALUES ('$surname', '$name', '$lastname', '$depID',CURRENT_TIMESTAMP)";
+			VALUES ('$surname', '$name', '$lastname', '$depID',CURRENT_TIMESTAMP)"; // запрос на добавление
 		if($mysql->query($query)) {
 			$output = array('id' => $mysql->insert_id, 'name' => $name,'surname'=>$surname,'lastname'=>$lastname,'depId'=>$depID);
 		} 				
@@ -14,7 +14,7 @@
 			throw403();
 		};
 		break;	
-	case 'list':
+	case 'list': // показать 
 		$query = (isset($data['depID'])) ? $query = " SELECT `ID`, `Surname`, `Name`, `Lastname` FROM `Profs` WHERE `Departments_ID` = {$data['depID']}" : $query = "SELECT `ID`, `Surname`, `Name`, `Lastname` FROM `Profs`";
 		if ($result = $mysql->query($query)) {	
 			$output = array();
