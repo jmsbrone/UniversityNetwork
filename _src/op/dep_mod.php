@@ -25,28 +25,28 @@ switch ($data['type']){ 								// выбор между add, list, delete, modi
 			}								
 		} 	
 		else {
-			throw403(); // ошибка
+			throw403(); 							// ошибка
 		} 	
 		break;
-	case 'modify': // изменение
-		$new_name=check_str($data['name']); //берем из массива имя
-		$ID = checkInt($data['depID']);// берем из массива ID
+	case 'modify': 									// изменение
+		$new_name=check_str($data['name']);					//берем из массива имя
+		$ID = checkInt($data['depID']);						// берем из массива ID
 		$query = "-- Изменение данных аудитории 
 			UPDATE `Departments` 
 			SET `name` = '$new_name' , `Modified` = CURRENT_TIMESTAMP 
-			WHERE `id` = $ID;";	// запрос на измененение						
-		if(!($mysql->query($query))) {	// проверка на невыполнение, если да, то ошибка							
+			WHERE `id` = $ID;";						// запрос на измененение						
+		if(!($mysql->query($query))) {						// проверка на невыполнение, если да, то ошибка							
 			throw403();
 		} 
-		$output = array('id' => $ID, 'name' => $new_name);	// добавляем в массив данные							
+		$output = array('id' => $ID, 'name' => $new_name);			// добавляем в массив данные							
 		break;
 					
 	case 'delete': // удаление
-		$ID = checkInt($data['depID']); // ID
+		$ID = checkInt($data['depID']);						 // ID
 		$query = "DELETE FROM `departments` WHERE `departments`.`ID` = $ID; 
-			INSERT INTO `dellog` (`Text`, `ID`) VALUES ('dep', $ID);";// запрос на удаление
-		runMultiQuery($query); 		// запускаем функцию выполнения мультизапроса			
-		$output = array('id' =>$ID);	// добавляем в массив ID					
+			INSERT INTO `dellog` (`Text`, `ID`) VALUES ('dep', $ID);";	// запрос на удаление
+		runMultiQuery($query); 							// запускаем функцию выполнения мультизапроса			
+		$output = array('id' =>$ID);						// добавляем в массив ID					
 		break;	 
 }
 		?>
