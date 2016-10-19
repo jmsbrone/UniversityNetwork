@@ -127,4 +127,9 @@ var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages',
     }])
     .config(['$mdDateLocaleProvider', function($locale){
         $locale.firstDayOfWeek = 1;
+    }])
+    .config(['$mdThemingProvider', function($mdThemingProvider){
+        $mdThemingProvider.theme('default')
+            .primaryPalette('blue')
+            .accentPalette('grey');
     }]);

@@ -1,4 +1,4 @@
-app.controller('studentMenuController', ['$scope', '$state', function($scope, $state){
+app.controller('studentMenuController', ['$scope', '$state', '$timeout', function($scope, $state, $timeout){
     $scope.menuItems = [
         {
             text: 'Профиль',
@@ -45,13 +45,21 @@ app.controller('studentMenuController', ['$scope', '$state', function($scope, $s
         }
     }
     
+    var menuFloatCount = 0;
+
     $(window).scroll(function(){
-        var menu = $('#main-menu');
-        var diff = window.pageYOffset - menu.offset().top;
-        menu.animate({
-            'padding-top': diff > 0 ? diff : 0
-        }, 25, function(){
-            console.debug('complete');
-        });
+        menuFloatCount++;
+        $timeout(function(){
+            if (--menuFloatCount == 0){
+                var menu = $('#main-menu');
+                var diff = window.pageYOffset - menu.offset().top;
+                if (menu.is(':animated')) return;
+                menu.animate({
+                    'padding-top': diff > 0 ? diff : 0
+                }, 250, function(){
+                    console.debug('complete');
+                });
+            }
+        }, 100);
     });
 }]);

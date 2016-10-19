@@ -40,9 +40,14 @@ app.service('storage', ['api', function(api){
         }, function(response){
             console.debug(response);
         });
+        api.get('schedule_mod', 'list', {}).then(function(response){
+            obj.rules = response.data;
+        }, function(response){
+            console.debug(response);
+        });
     }, function(response){
         console.debug(response);
     });
-   
+    
     return obj;
 }]);
