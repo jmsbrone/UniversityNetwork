@@ -14,9 +14,6 @@ function throw403($msg){
     die($mysql->error." query:".$query);
 }
 
-// Check functions.
-require_once "check.php";
-
 // Placeholder
 function checkInt($myVar){
     if (isset($myVar)) return $myVar;
@@ -101,10 +98,7 @@ if (!isset($_GET['rtype'])){
     throw403('Invalid method.');
 }
 
-$update = $_GET['update'];
-if ($_SESSION['lastTimestamp']){
-    $time = $_SESSION['lastTimestamp'];
-} else $time = time();
+$update = $_GET['update'] ?? false;
 
 if (isset($_POST['json'])){
     $_POST = json_decode($_POST['json'], true);
@@ -184,7 +178,13 @@ $requestMasks = array(
     'attendance_mod_delete' => 4,
     'attendance_mod_grouplist' => 6,
     'upload_req_request' => 6,
-    'upload_req_complete' => 6
+    'upload_req_complete' => 6,
+    'lab_mod_list' => 6,
+    'lab_mod_add' => 6,
+    'lab_mod_set' => 6,
+    'lab_mod_unset' => 6,
+    'lab_mod_delete' => 4,
+    'lab_mod_modify' => 6
 );
 
 # Composing type.
@@ -196,10 +196,7 @@ $groupID = $_SESSION['groupID'];
 $accountType = $_SESSION['accountType'];
 $userID = $_SESSION['userID'];
 
-if (($requestMasks[$type] & $accountMask) == 0) {
-    trigger_error("invalid mask: Denied for {$_SESSION['id']} mask=$accountMask type=$type requestmask={$requestMasks[$type]}.");
-    throw403();
-}
+if (($requestMasks[$type] & $accountMask) == 0) throw403();
 
 # At this point request is authorized.
 # Configuraion of MySQL. Connects to database and creates $mysql variable.
@@ -207,6 +204,9 @@ require_once "db_connect.php.dsf";
 
 
 if ($update){
+    if ($_SESSION['lastTimestamp']){
+        $time = $_SESSION['lastTimestamp'];
+    } else $time = time();
     switch($accountType){
         case 'admin':
         // Session list
@@ -266,13 +266,15 @@ if ($update){
         $data = array('type' => 'list');
         require $script;
     }
-} else require $_GET['rtype'].".php";
+    $_SESSION['lastTimestamp'] = time();
+} else {
+    require_once "check.php";
+    require $_GET['rtype'].".php";
+}
 
 # Requests populate variable $output as assossiative/index array of data.
 
 # Request is completed.
-
-$_SESSION['lastTimestamp'] = time();
 
 $mysql->close();
 

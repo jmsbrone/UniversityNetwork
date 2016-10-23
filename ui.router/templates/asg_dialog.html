@@ -1,0 +1,58 @@
+<md-dialog aria-label="Assignments" style="max-height: 80%; max-width: 80%; min-width: 400px">
+    <md-toolbar class="md-primary">
+        <div class="md-toolbar-tools">
+            <h2>Работы</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="close()">
+                <md-icon md-svg-src="images/icons/ic_clear_black_24px.svg" aria-label="Close dialog"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    
+    <md-dialog-content>
+        <md-tabs md-dynamic-height>
+            <md-tab label="Лабораторные">
+                <md-content class="md-padding">
+                    <div ng-show="labFormVisible">
+                        <md-button class="md-raised" ng-click="labFormVisible = false">Закрыть форму</md-button>
+                        <h4>Добавление лабораторной</h4>
+                        <form name="labForm" ng-if="labFormVisible" ng-init="newLab = {order: 1}">
+                            <md-input-container>
+                                <label>Номер</label>
+                                <input type="number" md-min="1" md-max="10" ng-model="newLab.order" required>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Тема</label>
+                                <input type="text" ng-model="newLab.theme" md-minlength="5" required>
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Описание</label>
+                                <textarea ng-model="newLab.desc" rows="3" md-minlength="10"></textarea>
+                            </md-input-container>
+                            <md-button class="md-primary md-raised" ng-show="labForm.$valid" ng-click="confirmLab()">Добавить</md-button>
+                        </form>
+                    </div>
+                    <div ng-show="!labFormVisible" layout="column">
+                        <md-button class="md-raised" ng-click="labFormVisible = true">Добавить</md-button>
+                        <md-divider></md-divider>
+                        <md-list>
+                            <md-list-item class="md-3-line" ng-repeat="lab in labs">
+                                <div class="md-list-item-text">
+                                    <h3>Лабораторная работа №{{lab.order}}</h3>
+                                    <p>{{ lab.theme }}</p>
+                                    <p>{{ lab.desc ? lab.desc : 'Описание отсутствует' }}</p>
+                                </div>
+                                <md-switch class="md-secondary md-warn" ng-model="lab.completed" ng-change="updateStatus(lab)"></md-switch>
+                                <md-divider ng-if="!$last"></md-divider>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+    </md-dialog-content>
+    <md-divider></md-divider>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised" ng-click="close()">Закрыть</md-button>
+    </md-dialog-actions>
+</md-dialog>

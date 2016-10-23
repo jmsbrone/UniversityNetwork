@@ -1,4 +1,4 @@
-app.service('storage', ['api', function(api){
+app.service('storage', ['api', '$timeout', '$state', function(api, $timeout, $state){
     var obj = {
         semester: null,
         getWeek: function(from){
@@ -18,20 +18,7 @@ app.service('storage', ['api', function(api){
             return (now.valueOf() - start_day.valueOf()) / (1000 * 3600 * 24 * 7) + 1;
         }
     };
-    api.get('semester_mod', 'list',{}).then(function(response){
-        console.debug(response);
-        var now = new Date();
-        for(i=0;i<response.data.length;++i){
-            var s = response.data[i];
-            s.startTimestamp = new Date(s.startTimestamp * 1000);
-            s.endTimestamp = new Date(s.endTimestamp * 1000);
-            if (s.startTimestamp < now && s.endTimestamp > now) {
-                obj.semester = s;
-                break;
-            }
-        }
-        if (!obj.semester) return;
-        obj.currentWeek = obj.getWeek();
+    var updateSubjectList = function(){
         api.get('group_req','subject_list', {
             semesterID: obj.semester.id
         }).then(function(response){
@@ -39,15 +26,43 @@ app.service('storage', ['api', function(api){
             obj.program = response.data;
         }, function(response){
             console.debug(response);
+            $timeout(updateSubjectList, 500);
         });
+    };
+    var updateSchedule = function(){
         api.get('schedule_mod', 'list', {}).then(function(response){
             obj.rules = response.data;
         }, function(response){
             console.debug(response);
+            $timeout(updateSchedule, 500);
         });
-    }, function(response){
-        console.debug(response);
-    });
-    
+    }
+    var updateFn = function(){
+        if ($state.current.name.search("app.student") == -1){
+            $timeout(updateFn, 500);
+            return;
+        }
+        api.get('semester_mod', 'list',{}).then(function(response){
+            console.debug(response);
+            var now = new Date();
+            for(i=0;i<response.data.length;++i){
+                var s = response.data[i];
+                s.startTimestamp = new Date(s.startTimestamp * 1000);
+                s.endTimestamp = new Date(s.endTimestamp * 1000);
+                if (s.startTimestamp < now && s.endTimestamp > now) {
+                    obj.semester = s;
+                    break;
+                }
+            }
+            if (!obj.semester) return;
+            obj.currentWeek = obj.getWeek();
+            updateSubjectList();
+            updateSchedule();
+        }, function(response){
+            console.debug(response);
+            $timeout(updateFn, 500);
+        });
+    }
+    updateFn();
     return obj;
 }]);

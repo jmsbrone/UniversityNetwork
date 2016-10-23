@@ -1,4 +1,4 @@
-app.directive('subject', ['$mdDialog', 'api', function($mdDialog, api){
+app.directive('subject', ['$mdDialog', 'api', 'storage', function($mdDialog, api, storage){
     return {
         restrict: 'E',
         scope: {
@@ -19,7 +19,14 @@ app.directive('subject', ['$mdDialog', 'api', function($mdDialog, api){
                 
             };
             $scope.asgClick = function(){
-                
+                storage.activeProgram = $scope.data;
+                $mdDialog.show({
+                    controller: 'subjectAsgController',
+                    templateUrl: 'ui.router/templates/asg_dialog.html',
+                    parent: angular.element(document.body),
+                    clickOutsideToClose: false
+                })
+                .then();
             };
             $scope.subgroupChanged = function(){
                 if (!$scope.subgroup) return;
