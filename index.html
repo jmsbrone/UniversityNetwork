@@ -4,12 +4,12 @@
     <meta charset='utf-8'> 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <script>
+    <!--script>
         if (location.protocol == 'http:'){
             console.debug('redirecting to https');
             window.location = 'https:'+location.href.substr(5);
         }
-    </script>
+    </script-->
     
     <!-- JQuery --> 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -35,7 +35,7 @@
     <script src="js/angularJS/angular-locale_ru-ru.js"></script>
     <script src="js/angularJS/loading-bar.min.js"></script>
     <link rel="stylesheet" href="styles/loading-bar.min.css">
-    <script src="js/angularjs/config.js?version=1.1.30"></script>
+    <script src="js/angularjs/config.js?version=1.1.32"></script>
     <link rel="stylesheet" href="_src/styles/styles.css?version=1.1.14">
     
     <!-- Stylesheets -->
@@ -50,8 +50,6 @@
     <md-content ui-view="header"></md-content>
     <md-content ui-view="body">
         <div ui-view="main"></div>
-        <div ui-view="login"></div>
-        <div ui-view="register"></div>
         <div ui-view="adminPC"></div>
         <div ui-view="managerPC"></div>
         <div ui-view="studentPC"></div>

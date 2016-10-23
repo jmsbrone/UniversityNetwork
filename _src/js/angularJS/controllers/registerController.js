@@ -1,18 +1,24 @@
-app.controller('registerController', ['$scope', 'api', '$state', function($scope, api, $state){
-    if ($state.current.name == 'app.register.student' || $state.current.name == 'app.register.manager'){
-        $scope.isRegisterInput = false;
-        $state.go('app.register');
-    }
+app.controller('registerController', ['$scope', 'api', '$state', '$mdDialog', function($scope, api, $state, $mdDialog){
     $scope.managerRegister = false;
     $scope.studentRegister = false;
     
-    $scope.checkHash = function(){
+    var prompt = $mdDialog.prompt()
+        .title('Требуется код регистрации')
+        .textContent('Код является персональным и используется для регистрации в системе.')
+        .placeholder('')
+        .ariaLabel('hash')
+        .ok('Подтвердить')
+        .cancel('Закрыть');
+    
+    $mdDialog.show(prompt).then(function(result){
+        $scope.hash = result;
         api.get('auth_req','invite_check', {
-            hash : $scope.hash
+            hash : result
         })
         .then(function(response){
             console.debug(response);
             $scope.user = response.data;
+            
             $scope.managerRegister = false;
             $scope.studentRegister = false;
             switch($scope.user.type){
@@ -23,11 +29,20 @@ app.controller('registerController', ['$scope', 'api', '$state', function($scope
                     $scope.studentRegister = true;
                     break;
             }
-            $scope.isRegisterInput = true;
         }, function(response){
             console.debug(response);
+            $state.go('app.main');
+            $mdDialog.show(
+                $mdDialog.alert()
+                    .clickOutsideToClose(true)
+                    .title('Неверный код регистрации')
+                    .textContent('Код регистрации не найден либо уже использован.')
+                    .ok('Закрыть')
+            );
         });
-    }
+    }, function(){
+        $state.go('app.main');
+    });
     
     $scope.register = function(){
         if ($scope.login.length < 4 || $scope.psw.length < 4){
@@ -52,5 +67,5 @@ app.controller('registerController', ['$scope', 'api', '$state', function($scope
         }, function(response){
             console.debug(response);
         });
-    }
+    };
 }]);
