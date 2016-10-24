@@ -44,6 +44,15 @@ $cellPadding: 5px;
         }
         
         text-align: center;
+        
+        & .class-add-asg-button {
+            opacity: 0.1;
+        }
+        &:hover {
+            & .class-add-asg-button {
+                opacity: 1.0;
+            }
+        }
     }
     .schedule-header {
         //background: #e2efda;

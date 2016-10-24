@@ -1,5 +1,4 @@
-app.controller('studentScheduleController', ['$scope', 'api', 'flib', 'storage', '$timeout', function($scope, api, flib, storage, $timeout){
-    
+app.controller('studentScheduleController', ['$scope', '$mdPanel', 'api', 'flib', 'storage', '$timeout', function($scope, $mdPanel, api, flib, storage, $timeout){
     $scope.selectedDate = new Date();
     
     function updateFn(){
@@ -187,4 +186,54 @@ app.controller('studentScheduleController', ['$scope', 'api', 'flib', 'storage',
     $scope.$watch('colorTimeEven.red', updateEvenFn);
     $scope.$watch('colorTimeEven.green', updateEvenFn);
     $scope.$watch('colorTimeEven.blue', updateEvenFn);
+    
+    $scope.openSelection = function($event, cl){
+        var position = $mdPanel.newPanelPosition()
+            .relativeTo($event.target.closest('button'))
+            .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.BELOW);
+        
+        var mdPanelRef = $mdPanel.create({
+            attachTo: angular.element(document.body),
+            controller: 'asgSelectionController',
+            controllerAs: 'ctrl',
+            template: 
+                '<md-list md-colors="{background: \'background\'}">' +
+                '   <md-list-item layout-align="center center" ng-repeat="option in ctrl.options" ng-click="close(option)">' +
+                '       <p>{{ option }}</p>' + 
+                '   </md-list-item>' + 
+                '</md-list>'
+            ,
+            clickOutsideToClose: true,
+            escapeToClose: true,
+            locals: {
+                'options' : function(c){
+                    switch(c.classType){
+                        case 'lection': return false;
+                        case 'lab': return ['Лабораторная'];
+                        case 'activity': return ['Контрольная', 'Тест', 'Семинар'];
+                    }
+                }(cl)
+            },
+            position: position
+        });
+        //$scope.selected = mdPanelRef.selected;
+        mdPanelRef.open();
+        $scope.panel = mdPanelRef;
+        $scope.class = cl;
+    };
+    $scope.$watch('panel.selected', function(){
+        if (!$scope.panel) return;
+        //alert($scope.panel.selected);
+    });
+    
+    $scope.canHaveAsg = function(cl){
+        if (!cl) return false;
+        return cl.classType != 'lection';
+    };
+}]);
+app.controller('asgSelectionController', ['$scope', 'mdPanelRef', function($scope, mdPanelRef){
+    $scope.close = function(val){
+        mdPanelRef.selected = val;
+        mdPanelRef.close();
+    };
 }]);

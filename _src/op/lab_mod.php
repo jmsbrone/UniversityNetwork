@@ -34,10 +34,16 @@ switch($data['type']){
         $order = $data['order'];
         $theme = str_replace("'", "\'", $data['theme']);
         $desc = str_replace("'", "\'", $data['desc'] ?? '');
-        $programID = $data['programID'] ?? -1;
+        $classID = $data['classID'] ?? -1;
+
+        $programID = ($row = $mysql->query("
+            SELECT `id` FROM `groupsemesterprogram` WHERE `Subjects_id` = (
+                SELECT `subjects_id` FROM `classRules` WHERE `id` = (
+                    SELECT `rules_id` FROM `classes` WHERE `id` = $classID
+                )) AND `groups_id` = $groupID")->fetch_row()) ? $row[0] : -1;
         
         $query = "
-            INSERT INTO `assignments` (`program_id`) VALUES ($programID);
+            INSERT INTO `assignments` (`program_id`, `classes_id`) VALUES ($programID, $classID);
             
             SET @asgID = @@IDENTITY;
             

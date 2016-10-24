@@ -19,10 +19,16 @@
                     </div>
                     <div ng-repeat="day in [0,1,2,3,4] track by $index" class="schedule-cell" ng-class="{'schedule-cell-active' : activeDay == day}" ng-attr-style="{{ getRowStyle(day, order) }}" flex>
                         <div layout="column" ng-show="checkSubgroup(classes[day][order])" layout-padding>
-                            <div>
+                            <div layout="column">
                                 <div><b>{{ getClassType(classes[day][order]) + ' ' + classes[day][order].subjectName }} {{ classes[day][order].subgroup ? ('(' + classes[day][order].subgroup + ')') : '' }}</b></div>
                                 <div>{{ getProfName(day, order) }}</div>
                                 <label ng-repeat="room in classes[day][order].rooms">{{ room.name }}</label>
+                                <div layout="row">
+                                    <span flex></span>
+                                    <md-button class="md-warn md-raised class-add-asg-button" ng-click="openSelection($event, classes[day][order])" ng-if="canHaveAsg(classes[day][order])">
+                                        <md-icon md-svg-icon="images/icons/ic_note_add_black_24px.svg"></md-icon>
+                                    </md-button>    
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -93,12 +93,12 @@ switch($data['type']){
                     $query = "SELECT `ID` as `id`";
                     foreach($fields as $field => $alias) $query.=",`$field` AS `$alias`";
                     $query .= " 
-                    FROM `$table` 
-                    WHERE `id` IN (
-                        SELECT DISTINCT `{$table}_id`
-                        FROM `rulesList`
-                        WHERE `id` = $ruleID
-                    )";
+                        FROM `$table` 
+                        WHERE `id` IN (
+                            SELECT DISTINCT `{$table}_id`
+                            FROM `rulesList`
+                            WHERE `id` = $ruleID
+                        )";
                     $result = $mysql->query($query);
                     if (!$result) throw403();
                     while($row = $result->fetch_assoc()){
