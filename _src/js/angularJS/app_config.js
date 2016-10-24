@@ -30,13 +30,14 @@ var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages',
             url: 'main',
             views: {
                 'main' : {
-                    templateUrl: viewFolder + 'main.html'
+                    templateUrl: viewFolder + 'main.html',
+                    controller: 'mainController'
                 }
             }
         })
         // Состояние отображения страницы входа. Внутри ui-view="body".
-        .state('app.login',{
-            url: 'login',
+        .state('app.main.login',{
+            url: '/login',
             views: {
                 'login' : {
                     templateUrl: viewFolder + 'login.html',
@@ -45,8 +46,8 @@ var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages',
             }
         })
         // Состояние отображения страницы регистрации. Внутри ui-view="body".
-        .state('app.register',{
-            url: 'register',
+        .state('app.main.register',{
+            url: '/register',
             views: {
                 'register' : {
                     templateUrl: viewFolder + 'register.html',
@@ -131,5 +132,6 @@ var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages',
     .config(['$mdThemingProvider', function($mdThemingProvider){
         $mdThemingProvider.theme('default')
             .primaryPalette('blue')
-            .accentPalette('grey');
+            .accentPalette('red')
+            .backgroundPalette('grey');
     }]);
