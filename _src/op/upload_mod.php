@@ -3,16 +3,16 @@ function checkFormat($path){
 	$format = end(explode(".", strtolower($path)));
 	$finfo = finfo_open(FILEINFO_MIME_TYPE);
 	$allow = array(	'jpg' => 'image/jpeg',
-                    'png' => 'image/png',
-					'bmp' => 'image/x-ms-bmp',
-					'doc' => 'application/msword',
-                    'txt' => 'text/plain',
-					'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-					'ppt' => 'application/vnd.ms-powerpoint',
-                    'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-					'rar' => 'application/x-rar',
-					'zip' => 'application/x-zip'
-					);
+                    	'png' => 'image/png',
+			'bmp' => 'image/x-ms-bmp',
+			'doc' => 'application/msword',
+                    	'txt' => 'text/plain',
+			'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+			'ppt' => 'application/vnd.ms-powerpoint',
+                    	'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			'rar' => 'application/x-rar',
+			'zip' => 'application/x-zip'
+			);
 	if (!array_key_exists($format, $allow)) {	
 		throw403();
 	}				
