@@ -81,10 +81,9 @@ function resizePicture($filename,$size){
 		return $filename;
 	}
 }
-$maxFileSize=3*1024*1024*1024*1024; 
+$maxFileSize=28147497671065600; /// 300 МБ или 28147497671065600 байт
 $randomName=generateName();
-$data['type']='add';
-//$basepath=; - указать абсолютный путь без папки принадлежности в виде C:/abc/
+//$basePath=; - указать абсолютный путь без папки принадлежности в виде C:/abc/
 switch ($data['type']){
 	case "add":
 		$ID = $data['classesID'];	
@@ -119,30 +118,28 @@ switch ($data['type']){
 			}
 		} 
 		else {
-			throw403("Err");
+			throw403();
 		}
 		$query = "INSERT INTO `Uploads` (`UploadedBy`,`FileType`,`FileSize`,`FileName`,`FileExtension`)
-				VALUES ($userID,$fileType,$size,$randomName,$format);";
-		$query1="INSERT INTO `AlbumFiles` (`AlbumsID`,`UploadsID`,`AddedBy`)
-				VALUES((SELECT AlbumsID FROM AlbumClass WHERE `ClassesID`=$ID),(SELECT UploadsID FROM Uploads WHERE `FileName`=$randomName),$userID)";
-		if($mysql->query($query)) {
-			$output = array('userID' => $userID, 'fileType' => $fileType,'size' => $size,'name' => $randomName,'format'=>$format);
-		} 	
-		else {
-			throw403();
-		};
-		if(!($mysql->query($query1))) {
-			throw403();
-		} 	
+				VALUES ($userID,$fileType,$size,$randomName,$format);
+				
+				SET @albID=(SELECT AlbumsID FROM AlbumClass WHERE `ClassesID`=$ID);
+				
+				SET @uplID=SELECT UploadsID FROM Uploads WHERE `FileName`=$randomName;
+				
+				INSERT INTO `AlbumFiles` (`AlbumsID`,`UploadsID`,`AddedBy`)
+				VALUES(@albID,@uplID,$userID)";
+		
+		runMultiQuery($query);	
 		break;
 			
 	case "delete":
-		$uploadsID = $data['uploadsID'];
-		$query = "DELETE FROM `uploads` WHERE `uploads`.`ID` = $uploadsID;
-				DELETE FROM `albumfiles` WHERE `Albums_ID` = $uploadsID;
-				INSERT INTO `dellog` (`Text`, `ID`) VALUES ('uploads', $uploadsID);";
-		runMultiQuery($query); 					
-		$output = array('id' =>$uploadsID);						
+		$uploadID = $data['uploadID'];
+		$query = "DELETE FROM `uploads` WHERE `uploads`.`ID` = $uploadID;";
+		if(!($mysql->query($query))) {
+			throw403();
+		} 				
+		$output = array('id' =>$uploadID);						
 		break;
    }
 ?>
