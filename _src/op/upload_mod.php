@@ -122,10 +122,11 @@ switch ($data['type']){
 		}
 		$query = "INSERT INTO `Uploads` (`UploadedBy`,`FileType`,`FileSize`,`FileName`,`FileExtension`)
 				VALUES ($userID,$fileType,$size,$randomName,$format);
+				SET @uplID = @@IDENTITY;
 				
 				SET @albID=(SELECT AlbumsID FROM AlbumClass WHERE `ClassesID`=$ID);
 				
-				SET @uplID=SELECT UploadsID FROM Uploads WHERE `FileName`=$randomName;
+				
 				
 				INSERT INTO `AlbumFiles` (`AlbumsID`,`UploadsID`,`AddedBy`)
 				VALUES(@albID,@uplID,$userID)";
