@@ -1,4 +1,4 @@
-app.controller('studentScheduleController', ['$scope', '$mdPanel', 'api', 'flib', 'storage', '$timeout', function($scope, $mdPanel, api, flib, storage, $timeout){
+app.controller('studentScheduleController', ['$scope', '$mdPanel', '$mdDialog', 'api', 'flib', 'storage', '$timeout', function($scope, $mdPanel, $mdDialog, api, flib, storage, $timeout){
     $scope.selectedDate = new Date();
     
     function updateFn(){
@@ -40,17 +40,20 @@ app.controller('studentScheduleController', ['$scope', '$mdPanel', 'api', 'flib'
             }
             if (!validRule) continue;
             for(k=0; k < rule.classes.length; ++k){
-                if (typeof(rule.classes[k].startTimestamp) == 'string') {
-                    rule.classes[k].startTimestamp = flib.timestampToDate(rule.classes[k].startTimestamp);
+                var cl = rule.classes[k];
+                if (typeof(cl.startTimestamp) == 'string') {
+                    cl.startTimestamp = flib.timestampToDate(cl.startTimestamp);
                 }
-                var classTime = rule.classes[k].startTimestamp;
+                var classTime = cl.startTimestamp;
                 if (classTime >= weekStart && classTime < weekEnd){
                     var order = classTime.getHours() / 2 - 4;
                     var wday = classTime.getDay() - 1;
 
                     classes[wday][order] = rule;
+                    classes[wday][order].id = cl.id;
                 }
             }
+            //rule.classes = null;
         }
         var dates = [];
         var startTimestamp = weekStart.valueOf();
@@ -230,10 +233,91 @@ app.controller('studentScheduleController', ['$scope', '$mdPanel', 'api', 'flib'
         if (!cl) return false;
         return cl.classType != 'lection';
     };
+    
+    // Class menu
+    $scope.onClassClick = function(cl, event){
+        $mdDialog.show({
+            controller: 'classDialogController',
+            templateUrl: 'ui.router/templates/class_dialog.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: true,
+            locals: {
+                classObj: cl
+            }
+        }).then();
+    };
 }]);
 app.controller('asgSelectionController', ['$scope', 'mdPanelRef', function($scope, mdPanelRef){
     $scope.close = function(val){
         mdPanelRef.selected = val;
         mdPanelRef.close();
     };
+}]);
+app.controller('classDialogController', ['$scope', '$mdDialog', 'classObj', 'api', '$timeout', function($scope, $mdDialog, cl, api, $timeout){
+    $scope.classObj = cl;
+    $scope.labs = [];
+    $scope.newAsg = {};
+    
+    $scope.close = function(){
+        $mdDialog.hide();
+    };
+    
+    api.get('lab_mod', 'class_list', {
+        classID: $scope.classObj.id
+    }).then(function(response){
+        console.debug(response);
+        $scope.labs = response.data;
+        for(i=0;i<$scope.labs.length;++i){
+            $scope.labs[i].completed = $scope.labs[i].completed == '1';
+        }
+        $timeout($scope.fixTabs, 100);
+    }, function(response){
+        console.debug(response);
+    });
+    
+    $scope.confirmAsg = function(){
+        switch($scope.asgType){
+            case 'lab':
+                api.get('lab_mod', 'add', {
+                    order: $scope.newAsg.order,
+                    theme: $scope.newAsg.theme,
+                    desc: $scope.newAsg.desc,
+                    classID: $scope.classObj.id
+                }).then(function(response){
+                    console.debug(response);
+                    $scope.newAsg.id = response.data.id;
+                    $scope.labs.push($scope.newAsg);
+                    $scope.addAsgForm = false;
+                }, function(response){
+                    console.debug(response);
+                });
+                break;
+        }
+        $scope.newAsg = {};
+    };
+    $scope.updateStatus = function(lab){
+        if (!lab._count) {
+            lab._count = 0;
+        }
+        lab._count++;
+        $timeout(function(){
+            if (--lab._count != 0) return;
+            api.get('lab_mod', lab.completed ? 'set' : 'unset',{
+                asgID: lab.id
+            }).then(function(response){
+                
+            }, function(response){
+                console.debug(response);
+            });
+        }, 500);
+    };
+    $scope.fixTabs = function(){
+        if ($scope.$$phase){
+            $timeout($scope.fixTabs, 50);
+            return;
+        }
+        var width = $('md-dialog md-pagination-wrapper').width();
+        $('md-dialog md-pagination-wrapper').width(width + 1);
+    };
+    
 }]);

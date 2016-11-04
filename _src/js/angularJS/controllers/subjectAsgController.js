@@ -17,20 +17,6 @@ app.controller('subjectAsgController', ['$scope', 'api', '$mdDialog', 'storage',
         console.debug(response);
     });
     
-    $scope.confirmLab = function(){
-        api.get('lab_mod', 'add', {
-            order: $scope.newLab.order,
-            theme: $scope.newLab.theme,
-            desc: $scope.newLab.desc,
-            programID: $scope.program.id
-        }).then(function(response){
-            console.debug(response);
-            $scope.labs.append($scope.newLab);
-        }, function(response){
-            console.debug(response);
-        });
-    };
-    
     $scope.updateStatus = function(lab){
         if (!lab._count) {
             lab._count = 0;

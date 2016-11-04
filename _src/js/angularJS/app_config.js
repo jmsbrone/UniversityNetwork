@@ -2,10 +2,10 @@
 var viewFolder = 'ui.router/views/';
 
 // Подключение AngularJS с библиотеками
-var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages', 'angular-loading-bar', 'ngAnimate'])
-    .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages', /*'angular-loading-bar',*/ 'ngAnimate'])
+    /*.config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
         cfpLoadingBarProvider.latencyThreshold = 50;
-    }])
+    }])*/
     // Настройка маршрутизатора
     .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise('/main');

@@ -9,6 +9,27 @@
 //@_end
 
 switch($data['type']){
+    case 'class_list':
+        $classID = $data['classID'];
+        
+        $query = "
+            SELECT 
+                `labs`.`assignments_id` as `id`,
+                `labs`.`order` as `order`,
+                `labs`.`theme` as `theme`,
+                `labs`.`desc` as `desc`,
+                `status`.`completed` as `completed`
+            FROM `labs` INNER JOIN `assignmentStatus` as `status` ON `status`.`assignments_id` = `labs`.`assignments_id`
+            WHERE `labs`.`assignments_id` IN (
+                SELECT `id` FROM `assignments` WHERE `classes_id` = $classID
+            ) AND `status`.`students_id` = $userID";
+        
+        $result = $mysql->query($query);
+        if (!$result) throw403();
+        $output = array();
+        while($row = $result->fetch_assoc()) $output[] = $row;
+        
+        break;
     case 'list':
         $programID = $data['programID'];
         
@@ -21,14 +42,25 @@ switch($data['type']){
                 `status`.`completed` as `completed`
             FROM `labs` INNER JOIN `assignmentStatus` as `status` ON `status`.`assignments_id` = `labs`.`assignments_id`
             WHERE `labs`.`assignments_id` IN (
-                SELECT `id` FROM `assignments` WHERE `program_id` = $programID
+                SELECT `id` FROM `assignments` WHERE `classes_id` IN (
+                    SELECT `classes`.`id`
+                    FROM `classes`
+                    WHERE `classRules_id` IN (
+                        SELECT `id`
+                        FROM `classRules`
+                        WHERE `subjects_id` = (
+                            SELECT `subjects_id` FROM `groupSemesterProgram` WHERE `id` = $programID
+                        ) AND `id` IN (
+                            SELECT `rules_id` FROM `ruleGroup` WHERE `groups_id` = $groupID
+                        )
+                    )
+                )
             ) AND `status`.`students_id` = $userID";
         
         $result = $mysql->query($query);
         if (!$result) throw403();
         $output = array();
         while($row = $result->fetch_assoc()) $output[] = $row;
-        
         break;
     case 'add':
         $order = $data['order'];
@@ -36,14 +68,8 @@ switch($data['type']){
         $desc = str_replace("'", "\'", $data['desc'] ?? '');
         $classID = $data['classID'] ?? -1;
 
-        $programID = ($row = $mysql->query("
-            SELECT `id` FROM `groupsemesterprogram` WHERE `Subjects_id` = (
-                SELECT `subjects_id` FROM `classRules` WHERE `id` = (
-                    SELECT `rules_id` FROM `classes` WHERE `id` = $classID
-                )) AND `groups_id` = $groupID")->fetch_row()) ? $row[0] : -1;
-        
         $query = "
-            INSERT INTO `assignments` (`program_id`, `classes_id`) VALUES ($programID, $classID);
+            INSERT INTO `assignments` (`classes_id`) VALUES ($classID);
             
             SET @asgID = @@IDENTITY;
             

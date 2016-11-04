@@ -12,7 +12,7 @@ $triangleMarginTop: -($triangleHeight/2 - $triangleOffsetTop);
 
 // Colors.
 $menuActiveBackground: lightgrey;
-$backgroundPrimaryColor: white;
+$backgroundPrimaryColor: #FAFAFA;
 $triangleShadow: black;
 $triangleInsetColor: $backgroundPrimaryColor;
 
@@ -40,6 +40,15 @@ $menuBorder: 1px solid black;
 .menu-pointer {
     @include triangle($triangle-width, $triangleHeight, $triangleShadow);
     background-color: $menuActiveBackground;
+    
+    &.menu-pointer-hidden {
+        @include noBorder();
+        width: $triangleHeight / 2;
+        background: $backgroundPrimaryColor;
+        border-right: $menuBorder;
+        padding-top: $triangleHeight / 2;
+        height: $triangleHeight / 2;
+    }
 }
 .menu-pointer-inset{
     @include triangle($triangle-width - 2, $triangleHeight - 2, $triangleInsetColor);
@@ -47,14 +56,7 @@ $menuBorder: 1px solid black;
     margin-left: $triangleMarginLeft;
     margin-top: $triangleMarginTop;
 }
-.menu-pointer-hidden {
-    @include noBorder();
-    width: $triangleHeight / 2;
-    background: $backgroundPrimaryColor;
-    border-right: $menuBorder;
-    padding-top: $triangleHeight / 2;
-    height: $triangleHeight / 2;
-}
+
 .menu-pointer-hide .menu-pointer-inset {
     @include noBorder();
 }

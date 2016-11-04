@@ -179,6 +179,7 @@ $requestMasks = array(
     'attendance_mod_grouplist' => 6,
     'upload_req_request' => 6,
     'upload_req_complete' => 6,
+    'lab_mod_class_list' => 6,
     'lab_mod_list' => 6,
     'lab_mod_add' => 6,
     'lab_mod_set' => 6,
