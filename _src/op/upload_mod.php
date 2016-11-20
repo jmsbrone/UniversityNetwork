@@ -15,9 +15,9 @@ switch ($data['type']){
 			$format = end(explode(".", strtolower($file['name'])));
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$allow = array(	'jpg' => 'image/jpeg',
-                    	'png' => 'image/png',
-			'bmp' => 'image/x-ms-bmp',
-			'doc' => 'application/msword',
+                'png' => 'image/png',
+				'bmp' => 'image/x-ms-bmp',
+				'doc' => 'application/msword',
                  'txt' => 'text/plain',
 			'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 			'ppt' => 'application/vnd.ms-powerpoint',
@@ -80,22 +80,22 @@ switch ($data['type']){
                         }
                         if ($format=='jpg') 
 						{ 
-						$image_p = imagecreatetruecolor($width, $height);
-                        imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
-                        imagejpeg($image_p, $filePath.'_'.$cropSize.'.'.$format, 100);
+							$image_p = imagecreatetruecolor($width, $height);
+                        	imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
+                        	imagejpeg($image_p, $filePath.'_'.$cropSize.'.'.$format, 100);
 						} 
 						if ($format=='png') 
 						{ 
-						$image_p = imagecreatetruecolor($width, $height);
-						imagesavealpha($image_p, true);
-						$trans_colour = imagecolorallocatealpha($image_p, 0, 0, 0, 127);
-						imagefill($image_p, 0, 0, $trans_colour);
+							$image_p = imagecreatetruecolor($width, $height);
+							imagesavealpha($image_p, true);
+							$trans_colour = imagecolorallocatealpha($image_p, 0, 0, 0, 127);
+							imagefill($image_p, 0, 0, $trans_colour);
 						//$image = imagecreatefrompng($filename);
-						imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
-						imagepng($image_p,$filePath.'_'.$cropSize.'.'.$format);
+							imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
+							imagepng($image_p,$filePath.'_'.$cropSize.'.'.$format);
 						}  
-                        imagedestroy($image_p);
-                    }
+            	imagedestroy($image_p);
+                   }
                     break;
             }
             $query = "
