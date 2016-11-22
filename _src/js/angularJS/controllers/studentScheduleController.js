@@ -253,7 +253,7 @@ app.controller('asgSelectionController', ['$scope', 'mdPanelRef', function($scop
         mdPanelRef.close();
     };
 }]);
-app.controller('classDialogController', ['$scope', '$mdDialog', 'classObj', 'api', '$timeout', function($scope, $mdDialog, cl, api, $timeout){
+app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classObj', 'api', '$timeout', function($scope, $mdDialog, flib, cl, api, $timeout){
     $scope.classObj = cl;
     $scope.labs = [];
     $scope.newAsg = {};
@@ -278,22 +278,30 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'classObj', 'api
     $scope.confirmAsg = function(){
         switch($scope.asgType){
             case 'lab':
-                api.get('lab_mod', 'add', {
+                if (!$scope.newAsg.desc){
+                    $scope.newAsg.desc = null;
+                }
+                api.get('lab_mod', $scope.modifyAsg ? 'modify' : 'add', {
+                    id: $scope.newAsg.id,
                     order: $scope.newAsg.order,
                     theme: $scope.newAsg.theme,
                     desc: $scope.newAsg.desc,
                     classID: $scope.classObj.id
                 }).then(function(response){
                     console.debug(response);
-                    $scope.newAsg.id = response.data.id;
-                    $scope.labs.push($scope.newAsg);
+                    if (!$scope.modifyAsg){
+                        $scope.newAsg.id = response.data.id;
+                        $scope.labs.push($scope.newAsg);
+                    }
                     $scope.addAsgForm = false;
+                    $scope.modifyAsg = false;
+                    $scope.newAsg = {};
                 }, function(response){
                     console.debug(response);
                 });
                 break;
         }
-        $scope.newAsg = {};
+        
     };
     $scope.updateStatus = function(lab){
         if (!lab._count) {
@@ -311,6 +319,32 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'classObj', 'api
             });
         }, 500);
     };
+    
+    $scope.deleteAsgFn = function(type, asg){
+        switch(type){
+            case 'lab':
+                api.get('lab_mod', 'delete', {
+                    id: asg.id
+                }).then(function(response){
+                    $scope.labs = flib.eject($scope.labs, asg);
+                }, function(response){
+                    console.debug(response);
+                });
+                break;
+        }
+    };
+    
+    $scope.modifyAsgFn = function(type, asg){
+        $scope.addAsgForm = true;
+        $scope.newAsg = asg;
+        try{
+            $scope.newAsg.order = parseInt($scope.newAsg.order);
+        }catch(err){
+            console.debug(err);
+        }
+        $scope.asgModify = true;
+    };
+    
     $scope.fixTabs = function(){
         if ($scope.$$phase){
             $timeout($scope.fixTabs, 50);

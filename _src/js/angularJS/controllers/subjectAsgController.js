@@ -1,4 +1,4 @@
-app.controller('subjectAsgController', ['$scope', 'api', '$mdDialog', 'storage', '$timeout', function($scope, api, $mdDialog, storage, $timeout){
+app.controller('subjectAsgController', ['$scope', 'api', 'flib', '$mdDialog', 'storage', '$timeout', function($scope, api, flib, $mdDialog, storage, $timeout){
     $scope.close = function(){
         $mdDialog.hide();
     };
@@ -16,6 +16,20 @@ app.controller('subjectAsgController', ['$scope', 'api', '$mdDialog', 'storage',
     }, function(response){
         console.debug(response);
     });
+    
+    $scope.deleteAsg = function(type, asg){
+        switch(type){
+            case 'lab':
+                api.get('lab_mod', 'delete', {
+                    id: asg.id
+                }).then(function(response){
+                    $scope.labs = flib.eject($scope.labs, asg);
+                }, function(response){
+                    console.debug(response);
+                });
+                break;
+        }
+    };
     
     $scope.updateStatus = function(lab){
         if (!lab._count) {

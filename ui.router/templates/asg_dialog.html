@@ -21,6 +21,9 @@
                                 <p>{{ lab.desc ? lab.desc : 'Описание отсутствует' }}</p>
                             </div>
                             <md-switch class="md-secondary md-warn" ng-model="lab.completed" ng-change="updateStatus(lab)"></md-switch>
+                            <md-button class="md-secondary md-warn" ng-click="deleteAsg('lab', lab)">
+                                <md-icon md-svg-src="images/icons/round-delete-button.svg"></md-icon>
+                            </md-button>
                             <md-divider ng-if="!$last"></md-divider>
                         </md-list-item>
                     </md-list>

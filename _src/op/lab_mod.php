@@ -55,7 +55,8 @@ switch($data['type']){
                         )
                     )
                 )
-            ) AND `status`.`students_id` = $userID";
+            ) AND `status`.`students_id` = $userID
+            ORDER BY `completed` ASC, `order` ASC";
         
         $result = $mysql->query($query);
         if (!$result) throw403();
@@ -98,12 +99,29 @@ switch($data['type']){
         $output = array();
         break;
     case 'modify':
+        $asgID = $data['id'];
+        $order = $data['order'];
+        $theme = str_replace("'", "\'", $data['theme']);
+        $desc = str_replace("'", "\'", $data['desc'] ?? '');
         
+        $query = "
+            UPDATE `labs`
+            SET `order` = $order,
+            `theme` = '$theme',
+            `desc` = '$desc'
+            WHERE `assignments_id` = $asgID
+            ";
+        if (!$mysql->query($query)) throw403();
+        if ($mysql->affected_rows == 0) throw403();
+        $output = array();
         break;
     case 'delete':
-        $asgID = $data['asgID'];
+        if ($_SESSION['accountType'] != 'president') throw403();
+        $asgID = $data['id'] ?? -1;
         
-        if (!$mysql->query("DELETE FROM `assignments` WHERE `id` = $asgID")) throw403();
+        if (!$mysql->query("DELETE FROM `labs` WHERE `assignments_id` = $asgID")) throw403();
+        if ($mysql->affected_rows == 0) throw403("Invalid parameter");
+        $mysql->query("DELETE FROM `assignments` WHERE `id` = $asgID");
         $output = array();
         break;
 }

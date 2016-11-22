@@ -5,7 +5,7 @@ app.service('api', ['$http', function($http){
             var url = this.basePath + 'rtype='+rtype + '&type='+type;
             var s = '';
             for(var k in data){
-                if (data.hasOwnProperty(k)){
+                if (data.hasOwnProperty(k) && data[k]){
                     s += '&' + k + '=' + encodeURIComponent(data[k]);
                 }
             }
