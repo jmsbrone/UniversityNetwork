@@ -15,9 +15,9 @@ switch ($data['type']){
 			$format = end(explode(".", strtolower($file['name'])));
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$allow = array(	'jpg' => 'image/jpeg',
-                'png' => 'image/png',
-				'bmp' => 'image/x-ms-bmp',
-				'doc' => 'application/msword',
+                    	'png' => 'image/png',
+			'bmp' => 'image/x-ms-bmp',
+			'doc' => 'application/msword',
                  'txt' => 'text/plain',
 			'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 			'ppt' => 'application/vnd.ms-powerpoint',
@@ -58,44 +58,44 @@ switch ($data['type']){
                     $fileType='images';
                     move_uploaded_file($file["tmp_name"], $generatedFilePath);
                     
-                    list($width_orig, $height_orig) = getimagesize($generatedFilePath);
-                    
-                    $image = imagecreatefromjpeg($generatedFilePath);
-					if ($format=='jpg') 
-					{ 
-						$image = imagecreatefromjpeg($generatedFilePath);
-					}
-					if ($format=='png') 
-					{ 
-						$image = imagecreatefrompng($generatedFilePath);
-					}
-                    $filePath = $basePath.'images/'.$randomNameWE;
-                    foreach(array(128, 640, 1280) as $cropSize){
-                        if ($width_orig > $height_orig){
-                            $width = $cropSize;
-                            $height = $height_orig * $width / $width_orig;
-                        } else {
-                            $height = $cropSize;
-                            $width = $width_orig * $height / $height_orig;
-                        }
-                        if ($format=='jpg') 
+                    list($width_orig, $height_orig) = getimagesize($generatedFilePath); 
+					if (($format=='jpg') || ($format=='png')) {				
+						if ($format=='jpg') 
 						{ 
-							$image_p = imagecreatetruecolor($width, $height);
-                        	imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
-                        	imagejpeg($image_p, $filePath.'_'.$cropSize.'.'.$format, 100);
-						} 
+							$image = imagecreatefromjpeg($generatedFilePath);
+						}
 						if ($format=='png') 
 						{ 
-							$image_p = imagecreatetruecolor($width, $height);
-							imagesavealpha($image_p, true);
-							$trans_colour = imagecolorallocatealpha($image_p, 0, 0, 0, 127);
-							imagefill($image_p, 0, 0, $trans_colour);
-						//$image = imagecreatefrompng($filename);
-							imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
-							imagepng($image_p,$filePath.'_'.$cropSize.'.'.$format);
-						}  
-            	imagedestroy($image_p);
-                   }
+							$image = imagecreatefrompng($generatedFilePath);
+						}
+						$filePath = $basePath.'images/'.$randomNameWE;
+						foreach(array(128, 640, 1280) as $cropSize){
+							if ($width_orig > $height_orig){
+								$width = $cropSize;
+								$height = $height_orig * $width / $width_orig;
+							} else {
+								$height = $cropSize;
+								$width = $width_orig * $height / $height_orig;
+							}
+							if ($format=='jpg') 
+							{ 
+								$image_p = imagecreatetruecolor($width, $height);
+								imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
+								imagejpeg($image_p, $filePath.'_'.$cropSize.'.'.$format, 100);
+							} 
+							if ($format=='png') 
+							{ 
+								$image_p = imagecreatetruecolor($width, $height);
+								imagesavealpha($image_p, true);
+								$trans_colour = imagecolorallocatealpha($image_p, 0, 0, 0, 127);
+								imagefill($image_p, 0, 0, $trans_colour);
+								//$image = imagecreatefrompng($filename);
+								imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
+								imagepng($image_p,$filePath.'_'.$cropSize.'.'.$format);
+							}  
+                        imagedestroy($image_p);
+						}
+					}
                     break;
             }
             $query = "
@@ -117,18 +117,18 @@ switch ($data['type']){
 		$query = "DELETE FROM `uploads` WHERE `uploads`.`ID` = $uploadID;";
 		$query1 = "SELECT `UploadedBy` FROM `uploads` WHERE `ID` = $uploadID`"
 		if ($result = $mysql->query($query1)) 
-		{	
-			$row = $result->fetch_row()
+		{	$row = $result->fetch_row()
 		} 
 		else 
 		{
 			throw403('badquery1')
 		}
 		if ($row[0]==$userID) {	
-			if(!($mysql->query($query))) {
-				throw403();
-			} 				
+		if(!($mysql->query($query))) {
+			throw403();
+		} 				
 		$output = array('id' =>$uploadID);
 		}
 		break;
    }
+?>
