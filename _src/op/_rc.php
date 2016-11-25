@@ -41,19 +41,8 @@ function generateHash(){
     }
     return $result;
 }
-/*
-function generateToken(){
-    $length = 64;
-    $result = '';
-    $alphabet = '0123456789abcdef';
-    $maxRand = strlen($alphabet) - 1;
-    for($i = 0; $i < $length; ++$i){
-        $result .= $alphabet[rand(0, $maxRand)];
-    }
-    return $result;
-}
-*/
-function runMultiQuery($query){
+
+function runMultiQuery($query, $autocommit = true){
     global $mysql;
     if (!$mysql->query("START TRANSACTION")) throw403('Cant start transaction.');
     if ($mysql->multi_query($query)){
@@ -65,7 +54,7 @@ function runMultiQuery($query){
             $mysql->query("ROLLBACK");
             throw403($error." for query: ".$query);
         }
-        $mysql->query("COMMIT");
+        if ($autocommit) $mysql->query("COMMIT");
     } else throw403($mysql->error);
 }
 
@@ -185,7 +174,8 @@ $requestMasks = array(
     'lab_mod_set' => 6,
     'lab_mod_unset' => 6,
     'lab_mod_delete' => 4,
-    'lab_mod_modify' => 6
+    'lab_mod_modify' => 6,
+    'upload_mod_add' => 6
 );
 
 # Composing type.
@@ -202,76 +192,10 @@ if (($requestMasks[$type] & $accountMask) == 0) throw403();
 # At this point request is authorized.
 # Configuraion of MySQL. Connects to database and creates $mysql variable.
 require_once "db_connect.php.dsf";
-
-
-if ($update){
-    if ($_SESSION['lastTimestamp']){
-        $time = $_SESSION['lastTimestamp'];
-    } else $time = time();
-    switch($accountType){
-        case 'admin':
-        // Session list
-            break;
-        case 'manager':
-            // Dependencies.
-            $queries = array(
-                'faculties' => composeNote('faculties', 'faculty'),
-                'specialities' => composeNote('specialities', 'spec'),
-                'groups' => composeNote('groups', 'group'),
-                'students' => composeNote('students', 'student'),
-                'program' => composeNote('groupsemesterprogram', 'program'),
-                'semester' => composeNote('semester', 'semester'),
-                'subjects' => composeNote('subjects', 'subject'),
-                'rooms' => composeNote('rooms', 'room'),
-                'rules' => composeNote('classrules', 'rule'),
-                'dep' => composeNote('departments', 'dep'),
-                'prof' => composeNote('profs', 'prof'),
-                'results' => composeNote('studentresults', 'result')
-            );
-            $output = array();
-            foreach($queries as $bundle => $note){
-                $updatedRows = array();
-                $deletedRows = array();
-                
-                // Updated rows.
-                $result = $mysql->query($note['updated']);
-                if (!$result){
-                    http_response_code(500);
-                    die;
-                }
-                while($row = $result->fetch_assoc()){
-                    $updatedRows[] = $row;
-                }
-                $result->free();
-                
-                // Deleted rows.
-                $result = $mysql->query($note['deleted']);
-                if (!$result){
-                    http_response_code(500);
-                    die;
-                }
-                while($row = $result->fetch_assoc()){
-                    $deletedRows[] = $row;
-                }
-                $result->free();
-                $output[$bundle] = array('updated' => $updatedRows, 'deleted' => $deletedRows);
-            }
-            break;
-        // Groups, schedule, attachments, subjects.            
-        case 'president':
-        case 'student': 
-            $list = array('assignment_mod.php', 'attendance_mod.php', 'dep_mod.php', 'faculty_mod.php', 'group_req.php', 'grouplist_mod.php', 'mark_mod.php', 'room_mod.php', 'schedule_mod.php', 'semester_mod.php', 'profile_mod.php');
-            break;
-    }
-    foreach($list as $script){
-        $data = array('type' => 'list');
-        require $script;
-    }
-    $_SESSION['lastTimestamp'] = time();
-} else {
-    require_once "check.php";
-    require $_GET['rtype'].".php";
-}
+# Type check.
+require_once "check.php";
+# Executing script.
+require $_GET['rtype'].".php";
 
 # Requests populate variable $output as assossiative/index array of data.
 
@@ -279,6 +203,7 @@ if ($update){
 
 $mysql->close();
 
+# Logging performance info.
 $end_exec_time = microtime(true);
 $end_memory_usage = memory_get_usage();
 $peak_memory = memory_get_peak_usage();
@@ -286,5 +211,6 @@ $peak_memory = memory_get_peak_usage();
 file_put_contents('S:/php7/usage_info.txt', "{$_GET['rtype']} {$_GET['type']} $start_exec_time $end_exec_time $start_memory_usage $end_memory_usage $peak_memory
 ", FILE_APPEND | LOCK_EX);
 
+# Feedback.
 die(json_encode($output));
 ?>

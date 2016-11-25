@@ -2,6 +2,10 @@
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>{{ classObj.id }}</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="close()">
+                <md-icon md-svg-icon="images/icons/close-button.svg"></md-icon>
+            </md-button>
         </div>
     </md-toolbar>
     <md-dialog-content ng-cloak>
@@ -10,16 +14,41 @@
             <md-tabs md-dynamic-height md-border-bottom>
                 <md-tab label="Файлы">
                     <md-content>
-                        <form ng-show="addFileForm" name="newUpload">
+                        <form ng-show="addFileForm" name="newUploadForm">
                             <md-button ng-click="addFileForm = false">Close</md-button>
-                            <md-input-container md-block>
-                                <label>Файл</label>
-                                <input type="file" ng-model="newUpload.file" required>
-                            </md-input-container>
-                            <md-button class="md-raised md-primary" ng-show="addFileForm.$valid" ng-click="confirmUpload()"></md-button>
+                            <input class="ng-hide" id="upload-file" type="file" multiple>
+                            <label for="upload-file" class="md-button md-raised">Выбрать файл</label>
+                            <md-button class="md-raised md-primary" ng-click="confirmUpload()">Add</md-button>
                         </form>
-                        <div ng-show="!addFileForm">
-                            <md-button ng-click="addFileForm = true">Upload</md-button>
+                        <div ng-show="!addFileForm" layout="column">
+                            <md-button ng-click="addFileForm = true">Загрузить</md-button>
+                            <md-divider></md-divider>
+                            <h3>Картинки</h3>
+                            <div layout="row" layout-wrap layout-padding>
+                                <md-card ng-repeat="file in files" ng-if="file.type == 'img'">
+                                    <md-card-title>
+                                        <md-card-title-text></md-card-title-text>
+                                    </md-card-title>
+                                    <md-card-content layout="row">
+                                        <div class="md-media-xl card-media"></div>
+                                        <md-card-actions layout="column">
+                                            <md-button class="md-icon-button" aria-label="delete">
+                                                <md-icon md-svg-icon="images/icons/ic_delete_forever_black_24px.svg"></md-icon>
+                                            </md-button>
+                                        </md-card-actions>
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                            <md-divider></md-divider>
+                            <h3>Документы</h3>
+                            <div layout="row" layout-wrap layout-padding>
+                            
+                            </div>
+                            <md-divider></md-divider>
+                            <h3>Архивы</h3>
+                            <div layout="row" layout-wrap layout-padding>
+                            
+                            </div>
                         </div>
                     </md-content>
                 </md-tab>

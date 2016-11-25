@@ -240,17 +240,11 @@ app.controller('studentScheduleController', ['$scope', '$mdPanel', '$mdDialog', 
             controller: 'classDialogController',
             templateUrl: 'ui.router/templates/class_dialog.html',
             parent: angular.element(document.body),
-            clickOutsideToClose: true,
+            clickOutsideToClose: false,
             locals: {
                 classObj: cl
             }
         }).then();
-    };
-}]);
-app.controller('asgSelectionController', ['$scope', 'mdPanelRef', function($scope, mdPanelRef){
-    $scope.close = function(val){
-        mdPanelRef.selected = val;
-        mdPanelRef.close();
     };
 }]);
 app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classObj', 'api', '$timeout', function($scope, $mdDialog, flib, cl, api, $timeout){
@@ -353,5 +347,28 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
         var width = $('md-dialog md-pagination-wrapper').width();
         $('md-dialog md-pagination-wrapper').width(width + 1);
     };
+    $scope.confirmUpload = function(){
+        api.upload('upload_mod','add',{
+            classID: $scope.classObj.id,
+            files: $('#upload-file')[0].files
+        }).then(function(response){
+            console.debug(response);
+            $scope.addFileForm = false;
+            $scope.files = response.data;
+        }, function(response){
+            console.debug(response);
+            flib.alert('Ошибка', response.data);
+        });
+    };
     
+    $scope.deleteFile = function(file){
+        api.get('upload_mod', 'delete', {
+            uploadID: file.id
+        }).then(function(response){
+            $scope.files = flib.eject($scope.files, file);
+        }).then(function(response){
+            console.debug(response);
+            flib.alert('Ошибка', response.data);
+        });
+    }
 }]);

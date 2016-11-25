@@ -1,4 +1,4 @@
-app.service('flib', function(){
+app.service('flib', ['$mdDialog', function($mdDialog){
     return {
         eject: function(arr, el){
             var newArr = [];
@@ -31,6 +31,18 @@ app.service('flib', function(){
         },
         timestampToDate: function(t){
             return new Date(t * 1000);
+        },
+        alert: function(header, text){
+            $mdDialog.show(
+                $mdDialog.alert()
+                    .parent(angular.element(document.body))
+                    .clickOutsideToClose(true)
+                    .title(header)
+                    .textContent(text)
+                    .ariaLabel('Alert dialog')
+                    .ok('Закрыть')
+                    .targetEvent(null)
+            );
         }
     }
-});
+}]);
