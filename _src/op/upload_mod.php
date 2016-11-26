@@ -34,16 +34,23 @@ switch ($data['type']){
         $failedUploads = 0;
         
         $output = array('files' => array());
+
         # Looping through uploaded files.
+        $currentFileIndex = 0;
         foreach($_FILES as $key => $file){
             # File size (in KB).
             $size = round($file["size"] / 1024);
             if($size > $maxFileSize || $size < 1 || $size > $available_space){
-                throw403('Недопустимый размер файла');
+                throw403("Недопустимый размер файла ($size KB). Доступное пространство - $available_space KB");
             }
+            $available_space -= $size;
+            
+            # File title (given by user).
+            $title = $data['filename'.($currentFileIndex++)];
             
             # Checking format.
-			$format = end(explode(".", strtolower($file['name'])));
+			$parts = explode(".", strtolower($file['name']));
+            $format = end($parts);
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$allow = array(	
                 'jpg' => 'image/jpeg',
@@ -98,15 +105,15 @@ switch ($data['type']){
             
             # Adding upload to DB (without commiting in case of further failure).
             $query = "
-                INSERT INTO `Uploads` (`UploadedBy`, `FileType`, `FileSizeKB`, `FileName`, `FileExtension`)
-                    VALUES ($userID,'$fileType',$size,'$randomNameWE','$format');
+                INSERT INTO `Uploads` (`UploadedBy`, `FileType`, `FileSizeKB`, `FileName`, `FileExtension`, `title`)
+                    VALUES ($userID,'$fileType',$size,'$randomNameWE','$format', '$title');
                 -- New upload ID
                 SET @uplID = @@IDENTITY;
                 -- Album for selected class
                 SET @albID=(SELECT Albums_ID FROM AlbumClass WHERE `Classes_ID`=$classID);
                 -- Appending to album
-                INSERT INTO `AlbumFiles` (`Albums_ID`,`Uploads_ID`,`AddedBy`)
-                    VALUES(@albID,@uplID,$userID)";
+                INSERT INTO `AlbumFiles` (`Albums_ID`,`Uploads_ID`)
+                    VALUES(@albID,@uplID)";
             runMultiQuery($query, false);
             
             # Trying to move file in corresponding folder.
@@ -149,7 +156,7 @@ switch ($data['type']){
                     
                     if ($width > $width_orig) {
                         # Making copy instead of exploding image.
-                        copy("$filepath.$format", "{$filepath}_$cropSize.$format");
+                        copy("$filePath.$format", "{$filePath}_$cropSize.$format");
                         continue;
                     }
                     
@@ -184,14 +191,16 @@ switch ($data['type']){
                         break;
                     }
                 }
-                
+                imagedestroy($image);
                 if ($cropSuccess){
                     $mysql->query('COMMIT');
                     $output['files'][] = array(
                         'id' => $mysql->query("SELECT @uplID")->fetch_row()[0],
                         'name' => $randomNameWE,
                         'ext' => $format,
-                        'type' => $fileType
+                        'type' => $fileType,
+                        'folder' => $typeToFolder[$fileType],
+                        'title' => $title
                     );
                 }
             } else  {
@@ -200,7 +209,9 @@ switch ($data['type']){
                     'id' => $mysql->query("SELECT @uplID")->fetch_row()[0],
                     'name' => $randomNameWE,
                     'ext' => $format,
-                    'type' => $fileType
+                    'type' => $fileType,
+                    'folder' => $typeToFolder[$fileType],
+                    'title' => $title
                 );
             }
         }
@@ -219,23 +230,24 @@ switch ($data['type']){
         if (!$uploadInfo) throw403('Не удается удалить файл: файл не найден либо вы пытаетесь удалить файл, добавленный не вами. Если файл был добавлен вами, обратитесь к администратору.');
         
         # Setting file information.
-        list($filename, $format, $filetype) = $uploadInfo;
+        list($filename, $format, $fileType) = $uploadInfo;
         
         # Deleting file from DB (without commit).
         runMultiQuery("DELETE FROM `uploads` WHERE `id` = $uploadID", false);
         
         # Deleting file physically.
-        $fullPathWE = $basePath.typeToFolder[$fileType].'/'.$filename;
+        $fullPathWE = $basePath.$typeToFolder[$fileType].'/'.$filename;
         if (!unlink($fullPathWE.'.'.$format)){
             $mysql->query("ROLLBACK");
             throw403('Не удается удалить файл: файл не найден на диске. Если вы видите данное сообщение, обратитесь к администратору.');
         }
         foreach($cropSizes as $cropSize){
-            $path = $fulePathWE.'_'.$cropSize.'.'.$format;
+            $path = $fullPathWE.'_'.$cropSize.'.'.$format;
             unlink($path);
         }
         
         $output = array();
+        $mysql->query("COMMIT");
 		break;
    }
 ?>

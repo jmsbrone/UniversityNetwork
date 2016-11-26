@@ -1,22 +1,24 @@
-<div>{{ subjectName }}</div>
-<div ng-click="showAlbums()">{{ countAlbums() }}</div>
-<div title="{{ fullName }}">{{ assignedProf }}</div>
-<div flex></div>
-<div layout="row">
-    <div flex="10"></div>
-    <div flex layout="column">
-        <div style="text-align: center" ng-click="asgClick()">Работы</div>
-        <md-divider></md-divider>
-        <div style="text-align: center">
-            <md-input-container md-no-float class="md-block">
-                <label>Подгруппа</label>
-                <md-select ng-model="subgroup" ng-change="subgroupChanged()">
-                    <md-option value=""></md-option>
-                    <md-option value="1">1</md-option>
-                    <md-option value="2">2</md-option>
-                </md-select>
-            </md-input-container>
+<div md-whiteframe="7">
+    <div>{{ subjectName }}</div>
+    <div ng-click="showAlbums()">Альбомы: {{ albumCount }}</div>
+    <div title="{{ fullName }}">{{ assignedProf }}</div>
+    <div flex></div>
+    <div layout="row">
+        <div flex="10"></div>
+        <div flex layout="column">
+            <div style="text-align: center" ng-click="asgClick()">Работы</div>
+            <md-divider></md-divider>
+            <div style="text-align: center">
+                <md-input-container md-no-float class="md-block">
+                    <label>Подгруппа</label>
+                    <md-select ng-model="subgroup" ng-change="subgroupChanged()">
+                        <md-option value=""></md-option>
+                        <md-option value="1">1</md-option>
+                        <md-option value="2">2</md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
         </div>
+        <div flex="10"></div>
     </div>
-    <div flex="10"></div>
 </div>

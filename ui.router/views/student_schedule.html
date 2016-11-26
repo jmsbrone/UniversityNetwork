@@ -17,7 +17,7 @@
                     <div class="schedule-cell" layout-align="center center" layout="row">
                         <p>{{ times[order] }}</p>
                     </div>
-                    <div ng-repeat="day in [0,1,2,3,4] track by $index" class="schedule-cell" ng-class="{'schedule-cell-active' : activeDay == day}" ng-attr-style="{{ getRowStyle(day, order) }}" flex>
+                    <div md-whiteframe="5" ng-repeat="day in [0,1,2,3,4] track by $index" class="schedule-cell" ng-class="{'schedule-cell-active' : activeDay == day}" ng-attr-style="{{ getRowStyle(day, order) }}" flex>
                         <div layout="row" ng-if="checkSubgroup(classes[day][order])" layout-padding ng-click="onClassClick(classes[day][order], $event)">
                             <div layout="column" flex>
                                 <div><b>{{ getClassType(classes[day][order]) + ' ' + classes[day][order].subjectName }} {{ classes[day][order].subgroup ? ('(' + classes[day][order].subgroup + ')') : '' }}</b></div>

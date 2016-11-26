@@ -5,7 +5,7 @@ app.controller('studentMenuController', ['$scope', '$state', '$timeout', functio
             icon: 'ic_face_black_24px',
             state: 'profile'
         },
-        {
+        /*{
             text: 'Новости',
             icon: 'ic_library_books_black_24px',
             state: 'news'
@@ -15,7 +15,7 @@ app.controller('studentMenuController', ['$scope', '$state', '$timeout', functio
             icon: 'ic_speaker_notes_black_24px',
             state: 'group'
         },
-        {
+        */{
             text: 'Расписание',
             icon: 'ic_schedule_black_24px',
             state: 'schedule'
@@ -46,7 +46,8 @@ app.controller('studentMenuController', ['$scope', '$state', '$timeout', functio
     }
     
     var menuFloatCount = 0;
-
+    
+    return;
     $(window).scroll(function(){
         menuFloatCount++;
         $timeout(function(){

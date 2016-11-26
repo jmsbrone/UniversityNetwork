@@ -248,13 +248,27 @@ app.controller('studentScheduleController', ['$scope', '$mdPanel', '$mdDialog', 
     };
 }]);
 app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classObj', 'api', '$timeout', function($scope, $mdDialog, flib, cl, api, $timeout){
+    // Setup and global functions.
     $scope.classObj = cl;
-    $scope.labs = [];
-    $scope.newAsg = {};
     
     $scope.close = function(){
         $mdDialog.hide();
     };
+    
+    $scope.fixTabs = function(){
+        if ($scope.$$phase){
+            $timeout($scope.fixTabs, 50);
+            return;
+        }
+        var width = $('md-dialog md-pagination-wrapper').width();
+        $('md-dialog md-pagination-wrapper').width(width + 1);
+    };
+    
+    //------------------------------------------------------------------
+    // Assignments.
+    
+    $scope.labs = [];
+    $scope.newAsg = {};
     
     api.get('lab_mod', 'class_list', {
         classID: $scope.classObj.id
@@ -269,43 +283,88 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
         console.debug(response);
     });
     
+    api.get('cg_mod', 'class_list', {
+        classID: $scope.classObj.id
+    }).then(function(response){
+        console.debug(response);
+        $scope.cgs = response.data;
+        for(i=0;i<$scope.cgs.length;++i){
+            $scope.cgs[i].completed = $scope.cgs[i].completed == '1';
+        }
+    }, function(response){
+        console.debug(response);
+    });
+    
+    api.get('kr_mod', 'class_list', {
+        classID: $scope.classObj.id
+    }).then(function(response){
+        console.debug(response);
+        $scope.krs = response.data;
+        for(i=0;i<$scope.krs.length;++i){
+            $scope.krs[i].completed = $scope.krs[i].completed == '1';
+        }
+    }, function(response){
+        console.debug(response);
+    });
+    
+    api.get('tests_mod', 'class_list', {
+        classID: $scope.classObj.id
+    }).then(function(response){
+        console.debug(response);
+        $scope.tests = response.data;
+        for(i=0;i<$scope.tests.length;++i){
+            $scope.tests[i].completed = $scope.tests[i].completed == '1';
+        }
+    }, function(response){
+        console.debug(response);
+    });
+    
     $scope.confirmAsg = function(){
+        if (!$scope.newAsg.desc){
+            $scope.newAsg.desc = null;
+        }
+        $scope.newAsg.classID = $scope.classObj.id;
+        var returnArray = null;
         switch($scope.asgType){
             case 'lab':
-                if (!$scope.newAsg.desc){
-                    $scope.newAsg.desc = null;
-                }
-                api.get('lab_mod', $scope.modifyAsg ? 'modify' : 'add', {
-                    id: $scope.newAsg.id,
-                    order: $scope.newAsg.order,
-                    theme: $scope.newAsg.theme,
-                    desc: $scope.newAsg.desc,
-                    classID: $scope.classObj.id
-                }).then(function(response){
-                    console.debug(response);
-                    if (!$scope.modifyAsg){
-                        $scope.newAsg.id = response.data.id;
-                        $scope.labs.push($scope.newAsg);
-                    }
-                    $scope.addAsgForm = false;
-                    $scope.modifyAsg = false;
-                    $scope.newAsg = {};
-                }, function(response){
-                    console.debug(response);
-                });
+                var request = 'lab_mod';
+                returnArray = 'labs';
+                break;
+            case 'kr':
+                var request = 'kr_mod';
+                returnArray = 'krs';
+                break;
+            case 'cg':
+                var request = 'cg_mod';
+                returnArray = 'cgs';
+                break;
+            case 'test':
+                var request = 'tests_mod';
+                returnArray = 'tests';
                 break;
         }
-        
+        api.get(request, $scope.modifyAsg ? 'modify' : 'add', $scope.newAsg)
+            .then(function(response){
+                if (!$scope.modifyAsg){
+                    $scope.newAsg.id = response.data.id;
+                    $scope[returnArray].push($scope.newAsg);
+                }
+                $scope.addAsgForm = false;
+                $scope.modifyAsg = false;
+                $scope.newAsg = {};
+            }, function(response){
+                console.debug(response);
+            });
     };
-    $scope.updateStatus = function(lab){
-        if (!lab._count) {
-            lab._count = 0;
+    $scope.updateStatus = function(type, asg){
+        if (!asg._count) {
+            asg._count = 0;
         }
-        lab._count++;
+        asg._count++;
         $timeout(function(){
-            if (--lab._count != 0) return;
-            api.get('lab_mod', lab.completed ? 'set' : 'unset',{
-                asgID: lab.id
+            if (--asg._count != 0) return;
+            api.get(type+'_mod', asg.completed ? 'set' : 'unset',{
+                asgID: asg.id
             }).then(function(response){
                 
             }, function(response){
@@ -315,49 +374,98 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
     };
     
     $scope.deleteAsgFn = function(type, asg){
+        var returnArray = null;
+        var requestGroup = '';
+        
         switch(type){
             case 'lab':
-                api.get('lab_mod', 'delete', {
-                    id: asg.id
-                }).then(function(response){
-                    $scope.labs = flib.eject($scope.labs, asg);
-                }, function(response){
-                    console.debug(response);
-                });
+                requestGroup = 'lab';
+                returnArray = 'labs';
+                break;
+            case 'cg':
+                requestGroup = 'cg';
+                returnArray = 'cgs';
+                break;
+            case 'kr':
+                requestGroup = 'kr';
+                returnArray = 'kr';
+                break;
+            case 'test':
+                requestGroup = 'tests';
+                returnArray = 'tests';
                 break;
         }
+        api.get(requestGroup + '_mod', 'delete', {
+            id: asg.id
+        }).then(function(response){
+            $scope[returnArray] = flib.eject($scope[returnArray], asg);
+        }, function(response){
+            console.debug(response);
+        });
     };
     
     $scope.modifyAsgFn = function(type, asg){
         $scope.addAsgForm = true;
         $scope.newAsg = asg;
-        try{
-            $scope.newAsg.order = parseInt($scope.newAsg.order);
-        }catch(err){
-            console.debug(err);
+        if ($scope.newAsg.order){
+            try{
+                $scope.newAsg.order = parseInt($scope.newAsg.order);
+            }catch(err){
+                console.debug(err);
+            }
         }
         $scope.asgModify = true;
     };
     
-    $scope.fixTabs = function(){
-        if ($scope.$$phase){
-            $timeout($scope.fixTabs, 50);
-            return;
-        }
-        var width = $('md-dialog md-pagination-wrapper').width();
-        $('md-dialog md-pagination-wrapper').width(width + 1);
+    //------------------------------------------------------------------
+    // Files.
+    
+    // Attaching reaction to file selection change.
+    $timeout(function(){
+        $('#upload-file').on('change', function(){
+            var files = $('#upload-file')[0].files;
+            $scope.uploadFiles = [];
+            for(i=0;i<files.length;++i){
+                $scope.uploadFiles.push({
+                    originalName: files[i].name,
+                    name: files[i].name
+                });
+            }
+            if (!$scope.$$phase){
+                $scope.$apply();
+            }
+        });
+    }, 1500);
+    
+    api.get('upload_req', 'class_files', {
+        classID: $scope.classObj.id
+    }).then(function(response){
+        console.debug(response);
+        $scope.files = response.data;
+    }, function(response){
+        console.debug(response);
+    });
+    
+    $scope.collectImagePath = function(file, cropSize){
+        return location.origin + '/' + file.folder + '/' + file.name + '_' + cropSize + '.' + file.ext;
     };
+    
     $scope.confirmUpload = function(){
         api.upload('upload_mod','add',{
             classID: $scope.classObj.id,
+            filenames: $scope.uploadFiles,
             files: $('#upload-file')[0].files
         }).then(function(response){
             console.debug(response);
             $scope.addFileForm = false;
-            $scope.files = response.data;
+            $scope.uploadFiles = [];
+            if (!$scope.files){
+                $scope.files = [];
+            }
+            $scope.files = $scope.files.concat(response.data.files);
         }, function(response){
             console.debug(response);
-            flib.alert('Ошибка', response.data);
+            //flib.alert('Ошибка', response.data);
         });
     };
     
@@ -366,9 +474,14 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
             uploadID: file.id
         }).then(function(response){
             $scope.files = flib.eject($scope.files, file);
-        }).then(function(response){
+        }, function(response){
             console.debug(response);
-            flib.alert('Ошибка', response.data);
+            //flib.alert('Ошибка', response.data);
         });
-    }
+    };
+    
+    $scope.clear = function(){
+        $scope.uploadFiles = [];
+        $('#upload-file')[0].files = null;
+    };
 }]);

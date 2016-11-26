@@ -11,7 +11,10 @@ function throw403($msg){
     
     global $mysql;
     global $query;
-    die($mysql->error." query:".$query);
+    if (isset($mysql) && isset($query)){
+        die($mysql->error." query:".$query);
+    }
+    die('Unknown error');
 }
 
 // Placeholder
@@ -159,15 +162,7 @@ $requestMasks = array(
     'semester_mod_list' => 31,
     'semester_mod_add' => 8,
     'semester_mod_delete' => 24,
-    'mark_mod_add' => 8,
-    'mark_mod_list' => 14,
-    'mark_mod_delete' => 8,
-    'attendance_mod_add' => 4,
-    'attendance_mod_list' => 6,
-    'attendance_mod_delete' => 4,
-    'attendance_mod_grouplist' => 6,
-    'upload_req_request' => 6,
-    'upload_req_complete' => 6,
+    # Labs
     'lab_mod_class_list' => 6,
     'lab_mod_list' => 6,
     'lab_mod_add' => 6,
@@ -175,7 +170,34 @@ $requestMasks = array(
     'lab_mod_unset' => 6,
     'lab_mod_delete' => 4,
     'lab_mod_modify' => 6,
-    'upload_mod_add' => 6
+    # CG_paper
+    'cg_mod_class_list' => 6,
+    'cg_mod_list' => 6,
+    'cg_mod_add' => 6,
+    'cg_mod_set' => 6,
+    'cg_mod_unset' => 6,
+    'cg_mod_delete' => 4,
+    'cg_mod_modify' => 6,
+    # Tests
+    'tests_mod_class_list' => 6,
+    'tests_mod_list' => 6,
+    'tests_mod_add' => 6,
+    'tests_mod_set' => 6,
+    'tests_mod_unset' => 6,
+    'tests_mod_delete' => 4,
+    'tests_mod_modify' => 6,
+    # KR
+    'kr_mod_class_list' => 6,
+    'kr_mod_list' => 6,
+    'kr_mod_add' => 6,
+    'kr_mod_set' => 6,
+    'kr_mod_unset' => 6,
+    'kr_mod_delete' => 4,
+    'kr_mod_modify' => 6,
+    #
+    'upload_mod_add' => 6,
+    'upload_req_class_files' => 6,
+    'upload_mod_delete' => 6
 );
 
 # Composing type.

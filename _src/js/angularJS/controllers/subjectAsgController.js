@@ -4,7 +4,7 @@ app.controller('subjectAsgController', ['$scope', 'api', 'flib', '$mdDialog', 's
     };
     
     $scope.program = storage.activeProgram;
-    
+
     api.get('lab_mod', 'list', {
         programID: $scope.program.id
     }).then(function(response){
@@ -17,29 +17,82 @@ app.controller('subjectAsgController', ['$scope', 'api', 'flib', '$mdDialog', 's
         console.debug(response);
     });
     
-    $scope.deleteAsg = function(type, asg){
+    api.get('cg_mod', 'list', {
+        programID: $scope.program.id
+    }).then(function(response){
+        console.debug(response);
+        $scope.cgs = response.data;
+        for(i=0;i<$scope.cgs.length;++i){
+            $scope.cgs[i].completed = $scope.cgs[i].completed == '1';
+        }
+    }, function(response){
+        console.debug(response);
+    });
+    
+    api.get('kr_mod', 'list', {
+        programID: $scope.program.id
+    }).then(function(response){
+        console.debug(response);
+        $scope.krs = response.data;
+        for(i=0;i<$scope.krs.length;++i){
+            $scope.krs[i].completed = $scope.krs[i].completed == '1';
+        }
+    }, function(response){
+        console.debug(response);
+    });
+    
+    api.get('tests_mod', 'list', {
+        programID: $scope.program.id
+    }).then(function(response){
+        console.debug(response);
+        $scope.tests = response.data;
+        for(i=0;i<$scope.tests.length;++i){
+            $scope.tests[i].completed = $scope.tests[i].completed == '1';
+        }
+    }, function(response){
+        console.debug(response);
+    });
+    
+    $scope.deleteAsgFn = function(type, asg){
+        var returnArray = null;
+        var requestGroup = '';
+        
         switch(type){
             case 'lab':
-                api.get('lab_mod', 'delete', {
-                    id: asg.id
-                }).then(function(response){
-                    $scope.labs = flib.eject($scope.labs, asg);
-                }, function(response){
-                    console.debug(response);
-                });
+                requestGroup = 'lab';
+                returnArray = 'labs';
+                break;
+            case 'cg':
+                requestGroup = 'cg';
+                returnArray = 'cgs';
+                break;
+            case 'kr':
+                requestGroup = 'kr';
+                returnArray = 'kr';
+                break;
+            case 'test':
+                requestGroup = 'tests';
+                returnArray = 'tests';
                 break;
         }
+        api.get(requestGroup + '_mod', 'delete', {
+            id: asg.id
+        }).then(function(response){
+            $scope[returnArray] = flib.eject($scope[returnArray], asg);
+        }, function(response){
+            console.debug(response);
+        });
     };
     
-    $scope.updateStatus = function(lab){
-        if (!lab._count) {
-            lab._count = 0;
+   $scope.updateStatus = function(type, asg){
+        if (!asg._count) {
+            asg._count = 0;
         }
-        lab._count++;
+        asg._count++;
         $timeout(function(){
-            if (--lab._count != 0) return;
-            api.get('lab_mod', lab.completed ? 'set' : 'unset',{
-                asgID: lab.id
+            if (--asg._count != 0) return;
+            api.get(type+'_mod', asg.completed ? 'set' : 'unset',{
+                asgID: asg.id
             }).then(function(response){
                 
             }, function(response){

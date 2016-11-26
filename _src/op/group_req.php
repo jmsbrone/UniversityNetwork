@@ -21,7 +21,23 @@ switch($data['type']){
                     `profs`.`name` AS `profName`,
                     `profs`.`lastname` AS `profLastname`,
                     `program`.`groups_id` AS `groupID`,
-                    `program`.`semester_id` as `semesterID`
+                    `program`.`semester_id` as `semesterID`,
+                    ((SELECT COUNT(`albums_id`) FROM `subjectAlbums` WHERE `subjects_id` = `subjects`.`id`) + (
+                        SELECT COUNT(`albums_id`) 
+                        FROM `albumClass`
+                        WHERE `classes_id` IN (
+                            SELECT `id`
+                            FROM `classes`
+                            WHERE `classes`.`classRules_id` IN (
+                                SELECT `id`
+                                FROM `classRules`
+                                WHERE `subjects_id` = `subjects`.`id`
+                            )
+                        ) AND EXISTS (
+                            SELECT * FROM `albumFiles` WHERE `albums_id` = `albumClass`.`albums_id`
+                        )
+                    )
+                    ) as `albumCount`
                 FROM
                     (`GroupSemesterProgram` AS `program`
                 INNER JOIN `profs` ON `profs`.`id` = `program`.`profs_id`)
@@ -33,7 +49,8 @@ switch($data['type']){
             WHERE
                 `groupProgram`.`semesterID` = $semesterID
                     AND (`subgroup`.`students_id` = $userID
-                    OR `groupProgram`.`groupID` = $groupID)";
+                    OR `groupProgram`.`groupID` = $groupID)
+            ORDER BY `subjectName`";
         
         if ($result = $mysql->query($query)){
             $output = array();

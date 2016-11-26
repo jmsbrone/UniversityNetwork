@@ -1,120 +1,88 @@
 <?php
+# Global settings.
+# Root folder for each file type.
+$typeToFolder = array(
+    'arh' => 'archives',
+    'img' => 'images',
+    'doc' => 'documents'
+);
 
 switch ($data['type']){
-	case "listsub":
-		$subjID=$data['subjectID'];
-		$query = "-- Получение списка альбомов для предмета
-						SELECT * FROM `albums` 
-						WHERE `id` IN (SELECT `Albums_ID` FROM `SubjectAlbums` WHERE `Subjects_ID` LIKE $subjID;)";
-		if ($result = $mysql->query($query)) {	
-			$output = array();
-			while ($row = $result->fetch_row())  {
-				$output[] = array(
-				'albumID' => $row[0], 
-				'name' => $row[1]
-				);						
-			};		
-					
-		} 	
-		else {
-				throw403();
-		} 
+	case "subject_albums":
+        $programID = $data['programID'];
+        $subjectID = $mysql->query("SELECT `subjects_id` FROM `groupSemesterProgram` WHERE `id` = $programID")->fetch_row()[0] ?? -1;
+
+        $output = array();
+        $result = $mysql->query("
+            SELECT `id` as `id`, `name` as `name`, `modified` as `time` 
+            FROM `albums`
+            WHERE `id` IN (
+                SELECT `albums_id` FROM `subjectAlbums` WHERE `subjects_id` = $subjectID
+            )
+        ");
+        if (!$result) throw403();
+        $output['original'] = array();
+        while($row = $result->fetch_assoc()){
+            $output['original'][] = $row;
+        }
+        
+        $result = $mysql->query("
+            SELECT 
+                `albums`.`id` as `id`, 
+                `albums`.`name` as `name`, 
+                `classes`.`startTime` as `time`
+            FROM (
+                `albums` INNER JOIN `albumClass` 
+                ON `albumClass`.`albums_id` = `albums`.`id`)
+                    INNER JOIN `classes` ON `classes`.`id` = `albumClass`.`classes_id`
+            WHERE `classes`.`id` IN (
+                SELECT `id` 
+                FROM `classes`
+                WHERE `rules_id` IN (
+                    SELECT `id` FROM `classRules` WHERE `classRules`.`subjects_id` = $subjectID
+                )
+            )
+        ");
+        if (!$result) throw403();
+        $output['classAlbums'] = array();
+        while($row = $result->fetch_assoc()){
+            $output['classAlbums'][] = $row;
+        }
 		break;
-	case "listlesson":
-		$query = "-- SELECT * FROM `albums` 
-					WHERE `id` IN (SELECT `albums_id` FROM `subjectAlbums` WHERE `subjects_id` = $subjectID) 
-					OR `id` IN (SELECT `albums_id` FROM `albumClass`
-					WHERE `classes_id` 
-					IN (SELECT `classes`.`id` FROM `classes` 
-					INNER JOIN `classRules` ON `classes`.`rules_id` = `classRules`.`id` 
-					WHERE `classRules`.`subjects_id` = $subjectID));";
-		if ($result = $mysql->query($query)) {	
-			$output = array();
-			while ($row = $result->fetch_row())  {
-				$output[] = array(
-				'albumID' => $row[0], 
-				'name' => $row[1]
-				);						
-			};		
-					
-		} 	
-		else {
-				throw403();
-		} 
-		break;
-	case "list":
-		$albID = $data['albumID'];
+        
+    case 'class_files':
+        $classID = $data['classID'];
+        $result = $mysql->query("
+            SELECT `albums_id` FROM `albumClass` WHERE `classes_id` = $classID
+        ");
+        if (!$result) throw403();
+        if ($row = $result->fetch_row()){
+            $albumID = $row[0];
+        } else throw403();
+        
+	case 'album_files':
+		$albumID = $albumID ?? $data['albumID'];
 		
-		$query = "-- Получение списка всех документов альбома
-						SELECT `Uploads_ID` FROM `AlbumFiles` WHERE `Albums_ID` LIKE $albID;";
-		if ($result = $mysql->query($query)) {	
-			$outputing = array();
-			while ($row = $result->fetch_row())  {
-				$outputing[] = array(
-				'uplID' => $row[0], 
-				);
-			};					
-		} 	
-		else {
-				throw403();
-		}
-		$documents = array();
-		$images = array();
-		$archives = array();
-		for ($i = 0; $i < count($outputing); $i = $i + 1) {
-			query = "-- SELECT `FileType`,`FileSize`,`FileName`,`FileExtension` FROM `Uploads` WHERE `ID` LIKE $outputing[i]['uplID'];";
-			
-			if ($result1 = $mysql->query($query)) {	
-				$result = array();
-				while ($row = $result1->fetch_row())  {
-					$result[] = array(
-					'FileType' => $row[0], 
-					'FileSize' => $row[1], 
-					'FileName' => $row[2], 
-					'FileExtension' => $row[3]
-					);
-				};
-				switch ($result[i]['FileType']){
-					case "archives":	
-						$archives[] = array(
-						'uplID' => $outputing[i]['uplID'],
-						'FileSize' => $result[i]['FileType'],
-						'FileName' =>$result[i]['FileName'],
-						'FileExtension' => $result[i]['FileExtension']
-						)
-					break;
-					case "images":
-						$images[] = array(
-						'uplID' => $outputing[i]['uplID'],
-						'FileSize' => $result[i]['FileType'],
-						'FileName' =>$result[i]['FileName'],
-						'FileExtension' => $result[i]['FileExtension']
-						);
-					break;
-					case "documents":
-						$documents[] = array(
-						'uplID' => $outputing[i]['uplID'],
-						'FileSize' => $result[i]['FileType'],
-						'FileName' =>$result[i]['FileName'],
-						'FileExtension' => $result[i]['FileExtension']
-						);
-					break;
-				}
-			}
-		else 
-		{
-				throw403();
-		} 
-		$output = array ('archives' => $archives, 'documents' => $documents, 'images' => $images) 
-   	}
+		$query = "
+            SELECT 
+                `Uploads_ID` as `id`,
+                `uploadedBy` as `author`,
+                `fileType` as `type`,
+                `fileName` as `name`,
+                `title` as `title`,
+                `fileExtension` as `ext`
+            FROM (`albums` INNER JOIN `AlbumFiles` ON `albumFiles`.`albums_id` = `albums`.`id`)
+            INNER JOIN `uploads` ON `albumFiles`.`uploads_id` = `uploads`.`id`
+            WHERE `Albums_ID` LIKE $albumID
+        ";
+        $result = $mysql->query($query);
+        if (!$result) throw403();
+        
+        $output = array();
+        while($row = $result->fetch_assoc()){
+            $row['folder'] = $typeToFolder[$row['type']];
+            $output[] = $row;
+        }
 	break;
-		
-
 }
-
-
-
-
-
-
 ?>

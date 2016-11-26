@@ -9,27 +9,66 @@
         </div>
     </md-toolbar>
     
-    <md-dialog-content>
-        <md-tabs md-dynamic-height>
-            <md-tab label="Лабораторные">
-                <md-content class="md-padding">
-                    <md-list>
-                        <md-list-item class="md-3-line" ng-repeat="lab in labs">
-                            <div class="md-list-item-text">
-                                <h3>Лабораторная работа №{{lab.order}}</h3>
-                                <p>{{ lab.theme }}</p>
-                                <p>{{ lab.desc ? lab.desc : 'Описание отсутствует' }}</p>
-                            </div>
-                            <md-switch class="md-secondary md-warn" ng-model="lab.completed" ng-change="updateStatus(lab)"></md-switch>
-                            <md-button class="md-secondary md-warn" ng-click="deleteAsg('lab', lab)">
-                                <md-icon md-svg-src="images/icons/round-delete-button.svg"></md-icon>
-                            </md-button>
-                            <md-divider ng-if="!$last"></md-divider>
-                        </md-list-item>
-                    </md-list>
-                </md-content>
-            </md-tab>
-        </md-tabs>
+    <md-dialog-content layout="column">
+        <md-content style="height:600px">
+            <section ng-if="labs.length > 0">
+                <md-subheader class="md-accent">Лабораторные работы ({{labs.length}})</md-subheader>
+                <md-list>
+                    <md-list-item class="md-3-line" ng-repeat="lab in labs">
+                        <div class="md-list-item-text">
+                            <h3>Лабораторная работа №{{lab.order}}</h3>
+                            <p>{{ lab.theme }}</p>
+                            <p>{{ lab.desc ? lab.desc : 'Описание отсутствует' }}</p>
+                        </div>
+                        <span flex></span>
+                        <md-switch class="md-accent" ng-model="lab.completed" ng-change="updateStatus('lab', lab)"></md-switch>
+                        <md-divider ng-if="!$last"></md-divider>
+                    </md-list-item>
+                </md-list>
+            </section>
+            <section ng-if="cgs.length > 0">
+                <md-subheader class="md-accent">Расчетные задания ({{cgs.length}})</md-subheader>
+                <md-list>
+                    <md-list-item class="md-3-line" ng-repeat="cg in cgs">
+                        <div class="md-list-item-text">
+                            <p>{{ cg.theme }}</p>
+                            <p>{{ cg.desc ? cg.desc : 'Описание отсутствует' }}</p>
+                        </div>
+                        <span flex></span>
+                        <md-switch class="md-warn" ng-model="cg.completed" ng-change="updateStatus('cg', cg)"></md-switch>
+                        <md-divider ng-if="!$last"></md-divider>
+                    </md-list-item>
+                </md-list>
+            </section>
+            <section ng-if="krs.length > 0">
+                <md-subheader class="md-accent">Контрольные работы ({{krs.length}})</md-subheader>
+                <md-list>
+                    <md-list-item class="md-3-line" ng-repeat="kr in krs">
+                        <div class="md-list-item-text">
+                            <h3>Контрольная работа</h3>
+                            <p>{{ kr.theme }}</p>
+                        </div>
+                        <span flex></span>
+                        <md-switch class="md-warn" ng-model="kr.completed" ng-change="updateStatus('kr', kr)"></md-switch>
+                        <md-divider ng-if="!$last"></md-divider>
+                    </md-list-item>
+                </md-list>
+            </section>
+            <section ng-if="tests.length > 0">
+                <md-subheader class="md-accent">Тесты  ({{tests.length}})</md-subheader>
+                <md-list>
+                    <md-list-item class="md-3-line" ng-repeat="test in tests">
+                        <div class="md-list-item-text">
+                            <h3>Тест</h3>
+                            <p>{{ test.theme }}</p>
+                        </div>
+                        <span flex></span>
+                        <md-switch class=" md-warn" ng-model="test.completed" ng-change="updateStatus('tests', test)"></md-switch>
+                        <md-divider ng-if="!$last"></md-divider>
+                    </md-list-item>
+                </md-list>
+            </section>
+        </md-content>
     </md-dialog-content>
     <md-divider></md-divider>
     <md-dialog-actions layout="row">

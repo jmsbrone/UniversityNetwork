@@ -1,10 +1,10 @@
-<md-content flex layout="column" class="md-primary">
-    <div layout="row" layout-align="end center">
-        <h3>Development mode</h3>
+<md-toolbar class="md-hue-2" style="position: fixed; width: 100%; top: 0px; left: 0px">
+    <div class="md-toolbar-tools">
+        <h2>
+            <span>Вэнерго</span>
+        </h2>
+        <md-divider class="md-accent"></md-divider>
+        <span flex></span>
+        <md-button ng-click="signOut()" ng-show="visible()" aria-label="Sign Out">Выход</md-button>
     </div>
-    <md-divider></md-divider>
-    <div layout="row" flex layout-align="end center">
-        <md-button ng-click="signOut()" ng-show="visible()">Выход</md-button>
-    </div>
-</md-content>
-<md-divider></md-divider>
+</md-toolbar>

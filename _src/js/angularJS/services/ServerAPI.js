@@ -36,7 +36,9 @@ app.service('api', ['$http', function($http){
                 }
                 var c = 0;
                 for(i=0;i<data['files'].length;++i){
-                    form.append('file'+c++, data['files'][i]);
+                    form.append('file'+c, data['files'][i]);
+                    form.append('filename'+c, data['filenames'][i].name);
+                    c++;
                 }
             }
             return $http({

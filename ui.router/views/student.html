@@ -1,6 +1,6 @@
 <div layout="column">
     <div layout="row">
-        <div flex="none" style="width: 250px;" id="main-menu" layout="column" ng-controller="studentMenuController" stretch-down>
+        <div flex="none" style="width: 250px;" id="main-menu" layout="column" ng-controller="studentMenuController">
             <div layout="row" ng-repeat="item in menuItems">
                 <div flex class="menu-item {{ activeMenuItem == item ? 'menu-item-active' : '' }}" ng-click="setActiveItem(item)">
                     <md-icon md-svg-icon="images/icons/{{ item.icon }}.svg"></md-icon>    {{ item.text }}
@@ -9,21 +9,20 @@
                     <div class="menu-pointer-inset"></div>
                 </div>
             </div>
-            <div layout="row" id="search-box">
+            <!--div layout="row" id="search-box">
                 <md-input-container flex-offset="15" flex="75">
                     <md-icon md-svg-src="images/icons/search_icon.svg"></md-icon>
                     <input type="text">
                 </md-input-container>
-            </div>
+            </div-->
             <div class="filler" flex></div>
         </div>
-        <div layout="column">
+        <div layout="column" flex style="overflow-y: scroll" stretch-down>
             <div ui-view="profile"></div>
-            <div ui-view="news"></div>
-            <div ui-view="group"></div>
+            <!--div ui-view="news"></div>
+            <div ui-view="group"></div-->
             <div ui-view="schedule"></div>
             <div ui-view="subjects"></div>
         </div>
-        <div flex hide show-gt-md></div>
     </div>
 </div>

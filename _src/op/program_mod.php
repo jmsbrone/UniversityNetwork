@@ -7,8 +7,13 @@ switch($data['type']){
         
         $query = "
             -- Получение программы группы
-            SELECT `groupsemesterprogram`.`id`, `subjects_ID` as `subjectID`, `examType`, CONCAT(`Profs`.`Surname`, ' ', `Profs`.`Name`, ' ', `Profs`.`Lastname`) as `profName`
-            FROM `GroupSemesterProgram` INNER JOIN `Profs` ON `Profs`.`ID` = `GroupSemesterProgram`.`Profs_ID`
+            SELECT 
+                `groupsemesterprogram`.`id`, 
+                `subjects_ID` as `subjectID`, 
+                `examType`, 
+                CONCAT(`Profs`.`Surname`, ' ', `Profs`.`Name`, ' ', `Profs`.`Lastname`) as `profName`
+            FROM 
+                `GroupSemesterProgram` INNER JOIN `Profs` ON `Profs`.`ID` = `GroupSemesterProgram`.`Profs_ID`
             WHERE `Groups_ID` = $groupID AND `Semester_ID` = $semesterID;";
         
         if ($result = $mysql->query($query)){

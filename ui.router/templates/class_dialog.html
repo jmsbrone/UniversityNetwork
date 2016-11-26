@@ -1,4 +1,4 @@
-<md-dialog aria-label="Class Dialog" style="width: 60%; height: 80%; max-width: 800px">
+<md-dialog aria-label="Class Dialog" style="width: 60%; height: 80%; max-width: 850px">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>{{ classObj.id }}</h2>
@@ -14,11 +14,41 @@
             <md-tabs md-dynamic-height md-border-bottom>
                 <md-tab label="Файлы">
                     <md-content>
-                        <form ng-show="addFileForm" name="newUploadForm">
-                            <md-button ng-click="addFileForm = false">Close</md-button>
-                            <input class="ng-hide" id="upload-file" type="file" multiple>
-                            <label for="upload-file" class="md-button md-raised">Выбрать файл</label>
-                            <md-button class="md-raised md-primary" ng-click="confirmUpload()">Add</md-button>
+                        <form ng-show="addFileForm" name="newUploadForm" layout="column">
+                            <div layout="row" layout-align="start center">
+                                <md-button ng-click="addFileForm = false">&lt;- Назад</md-button>
+                                <div>Добавление файлов</div>
+                            </div>
+                            <h4>Убедительная просьба добавлять только файлы, которые относятся к паре. Для добавления файлов, которые относятся скорее к предмету в целом, используйте вкладку файлов в диалоговом окне соответствующего предмета.</h4>
+                            <md-divider></md-divider>
+                            <div layout="row">
+                                <input class="ng-hide" id="upload-file" type="file" multiple>
+                                <label for="upload-file" class="md-button md-raised">Выбрать файл(-ы)</label>
+                            </div>
+                            <div ng-show="uploadFiles.length > 0">
+                                <h4>Ниже вы можете указать или изменить имена файлов, которые вы и другие пользователи будете видеть.</h4>
+                                <h5>Строго рекомендуется не оставлять (указывать) имена, не несущие никакой информации о содержании файла.</h5>
+                                <md-divider></md-divider>
+                                <div layout="row">
+                                    <div flex="5"></div>
+                                    <div layout="column" flex>
+                                        <div ng-repeat="file in uploadFiles">
+                                            <div>Имя файла: {{ file.originalName }}</div>
+                                            <md-input-container md-block>
+                                                <label>Новое имя</label>
+                                                <input type="text" ng-model="file.name">
+                                            </md-input-container>
+                                            <md-divider ng-if="!$last"></md-divider>
+                                        </div>
+                                    </div>
+                                    <div flex="5"></div>
+                                </div>
+                                <md-divider></md-divider>
+                                <div layout="row" layout-align="end center">
+                                    <md-button class="md-raised" ng-click="clear()">Очистить</md-button>
+                                    <md-button class="md-raised md-primary" ng-click="confirmUpload()">Готово</md-button>
+                                </div>
+                            </div>
                         </form>
                         <div ng-show="!addFileForm" layout="column">
                             <md-button ng-click="addFileForm = true">Загрузить</md-button>
@@ -30,9 +60,11 @@
                                         <md-card-title-text></md-card-title-text>
                                     </md-card-title>
                                     <md-card-content layout="row">
-                                        <div class="md-media-xl card-media"></div>
+                                        <div class="md-media-xl card-media">
+                                            <img ng-src="{{collectImagePath(file, 640)}}" flex layout-fill>
+                                        </div>
                                         <md-card-actions layout="column">
-                                            <md-button class="md-icon-button" aria-label="delete">
+                                            <md-button class="md-icon-button" aria-label="delete" ng-click="deleteFile(file)">
                                                 <md-icon md-svg-icon="images/icons/ic_delete_forever_black_24px.svg"></md-icon>
                                             </md-button>
                                         </md-card-actions>
@@ -42,7 +74,15 @@
                             <md-divider></md-divider>
                             <h3>Документы</h3>
                             <div layout="row" layout-wrap layout-padding>
-                            
+                                <div md-whiteframe="7" layout-padding ng-repeat="file in files" ng-if="file.type == 'doc'" layout-align="center center">
+                                    <div layout="row" layout-align="start center">
+                                        <div>{{ file.title }}</div>
+                                        <span flex></span>
+                                        <md-button class="md-icon-button" aria-label="delete" ng-click="deleteFile(file)">
+                                            <md-icon md-svg-icon="images/icons/ic_delete_forever_black_24px.svg"></md-icon>
+                                        </md-button>
+                                    </div>
+                                </div>
                             </div>
                             <md-divider></md-divider>
                             <h3>Архивы</h3>
@@ -55,47 +95,108 @@
                 <md-tab label="Работы">
                     <md-content class="md-padding">
                         <form ng-show="addAsgForm" name="newAsgForm" ng-init="newAsg = {}" layout="column">
-                            <md-button ng-click="addAsgForm = false">Close</md-button>
+                            <md-button ng-click="addAsgForm = false">Закрыть</md-button>
                             <md-input-container md-block>
-                                <label>Type</label>
+                                <label>Тип работы</label>
                                 <md-select ng-model="asgType" required>
-                                    <md-option value="lab">Lab</md-option>
-                                    <md-option value="">Coming soon</md-option>
+                                    <md-option value="lab">Лабораторная работа</md-option>
+                                    <md-option value="cg">Расчетно-графическая работа</md-option>
+                                    <md-option value="test">Тест</md-option>
+                                    <md-option value="kr">Контрольная работа</md-option>
                                 </md-select>
                             </md-input-container>
-                            <md-input-container md-block ng-if="asgType='lab'">
-                                <label>Order</label>
+                            <md-input-container md-block ng-if="asgType=='lab'">
+                                <label>Номер</label>
                                 <input type="number" ng-model="newAsg.order" value="1" required>
                             </md-input-container>
-                            <md-input-container md-block ng-if="asgType='lab'">
-                                <label>Theme</label>
+                            <md-input-container md-block>
+                                <label>Тема</label>
                                 <input type="text" minlength="5" ng-model="newAsg.theme" required>
                             </md-input-container>
-                            <md-input-container md-block ng-if="asgType='lab'">
-                                <label>Description</label>
+                            <md-input-container md-block ng-if="asgType=='lab' || asgType=='cg'">
+                                <label>Описание</label>
                                 <textarea rows="2" ng-model="newAsg.desc"></textarea>
                             </md-input-container>
-                            <md-button ng-show="newAsgForm.$valid" ng-click="confirmAsg()">Confirm</md-button>
+                            <md-button ng-show="newAsgForm.$valid" ng-click="confirmAsg()">Готово</md-button>
                         </form>
                         <div ng-show="!addAsgForm">
-                            <md-button ng-click="addAsgForm = true">Add</md-button>
-                            <md-list>
-                                <md-list-item class="md-3-line" ng-repeat="lab in labs">
-                                    <div class="md-list-item-text">
-                                        <h3>Лабораторная работа №{{lab.order}}</h3>
-                                        <p>{{ lab.theme }}</p>
-                                        <p>{{ lab.desc ? lab.desc : 'Описание отсутствует' }}</p>
-                                    </div>
-                                    <md-switch class="md-secondary md-warn" ng-model="lab.completed" ng-change="updateStatus(lab)"></md-switch>
-                                    <md-button class="md-secondary md-warn" ng-click="modifyAsgFn('lab', lab)" aria-label="Edit">
-                                        <md-icon md-svg-src="images/icons/underline-button.svg"></md-icon>
-                                    </md-button>
-                                    <md-button class="md-secondary md-warn" ng-click="deleteAsgFn('lab', lab)" aria-label="Delete">
-                                        <md-icon md-svg-src="images/icons/round-delete-button.svg"></md-icon>
-                                    </md-button>
-                                    <md-divider ng-if="!$last"></md-divider>
-                                </md-list-item>
-                            </md-list>
+                            <md-button ng-click="addAsgForm = true">Добавить</md-button>
+                            <section>
+                                <md-subheader class="md-accent">Лабораторные работы</md-subheader>
+                                <md-list>
+                                    <md-list-item class="md-3-line" ng-repeat="lab in labs">
+                                        <div class="md-list-item-text">
+                                            <h3>Лабораторная работа №{{lab.order}}</h3>
+                                            <p>{{ lab.theme }}</p>
+                                            <p>{{ lab.desc ? lab.desc : 'Описание отсутствует' }}</p>
+                                        </div>
+                                        <md-switch class="md-secondary md-warn" ng-model="lab.completed" ng-change="updateStatus('lab', lab)"></md-switch>
+                                        <md-button class="md-secondary md-warn" ng-click="modifyAsgFn('lab', lab)" aria-label="Edit">
+                                            <md-icon md-svg-src="images/icons/underline-button.svg"></md-icon>
+                                        </md-button>
+                                        <md-button class="md-secondary md-warn" ng-click="deleteAsgFn('lab', lab)" aria-label="Delete">
+                                            <md-icon md-svg-src="images/icons/round-delete-button.svg"></md-icon>
+                                        </md-button>
+                                        <md-divider ng-if="!$last"></md-divider>
+                                    </md-list-item>
+                                </md-list>
+                            </section>
+                            <section>
+                                <md-subheader class="md-accent">Расчетные задания</md-subheader>
+                                <md-list>
+                                    <md-list-item class="md-3-line" ng-repeat="cg in cgs">
+                                        <div class="md-list-item-text">
+                                            <p>{{ cg.theme }}</p>
+                                            <p>{{ cg.desc ? cg.desc : 'Описание отсутствует' }}</p>
+                                        </div>
+                                        <md-switch class="md-secondary md-warn" ng-model="cg.completed" ng-change="updateStatus('cg', cg)"></md-switch>
+                                        <md-button class="md-secondary md-warn" ng-click="modifyAsgFn('cg', cg)" aria-label="Edit">
+                                            <md-icon md-svg-src="images/icons/underline-button.svg"></md-icon>
+                                        </md-button>
+                                        <md-button class="md-secondary md-warn" ng-click="deleteAsgFn('cg', cg)" aria-label="Delete">
+                                            <md-icon md-svg-src="images/icons/round-delete-button.svg"></md-icon>
+                                        </md-button>
+                                        <md-divider ng-if="!$last"></md-divider>
+                                    </md-list-item>
+                                </md-list>
+                            </section>
+                            <section>
+                                <md-subheader class="md-accent">Контрольные работы</md-subheader>
+                                <md-list>
+                                    <md-list-item class="md-3-line" ng-repeat="kr in krs">
+                                        <div class="md-list-item-text">
+                                            <h3>Контрольная работа №{{ $i+1 }}</h3>
+                                            <p>{{ kr.theme }}</p>
+                                        </div>
+                                        <md-switch class="md-secondary md-warn" ng-model="kr.completed" ng-change="updateStatus('kr', kr)"></md-switch>
+                                        <md-button class="md-secondary md-warn" ng-click="modifyAsgFn('kr', kr)" aria-label="Edit">
+                                            <md-icon md-svg-src="images/icons/underline-button.svg"></md-icon>
+                                        </md-button>
+                                        <md-button class="md-secondary md-warn" ng-click="deleteAsgFn('kr', kr)" aria-label="Delete">
+                                            <md-icon md-svg-src="images/icons/round-delete-button.svg"></md-icon>
+                                        </md-button>
+                                        <md-divider ng-if="!$last"></md-divider>
+                                    </md-list-item>
+                                </md-list>
+                            </section>
+                            <section>
+                                <md-subheader class="md-accent">Тесты</md-subheader>
+                                <md-list>
+                                    <md-list-item class="md-3-line" ng-repeat="test in tests">
+                                        <div class="md-list-item-text">
+                                            <p>{{ test.theme }}</p>
+                                        </div>
+                                        <md-switch class="md-secondary md-warn" ng-model="test.completed" ng-change="updateStatus('tests', test)"></md-switch>
+                                        <md-button class="md-secondary md-warn" ng-click="modifyAsgFn('test', test)" aria-label="Edit">
+                                            <md-icon md-svg-src="images/icons/underline-button.svg"></md-icon>
+                                        </md-button>
+                                        <md-button class="md-secondary md-warn" ng-click="deleteAsgFn('test', test)" aria-label="Delete">
+                                            <md-icon md-svg-src="images/icons/round-delete-button.svg"></md-icon>
+                                        </md-button>
+                                        <md-divider ng-if="!$last"></md-divider>
+                                    </md-list-item>
+                                </md-list>
+                            </section>
                         </div>
                     </md-content>
                 </md-tab>

@@ -14,6 +14,7 @@ app.directive('subject', ['$mdDialog', 'api', 'storage', function($mdDialog, api
             $scope.assignedProf = $scope.data.profSurname + ' ' + $scope.data.profName[0] + '.' + $scope.data.profLastname[0] + '.';
             $scope.fullName = $scope.data.profSurname + ' ' + $scope.data.profName + ' ' + $scope.data.profLastname;
             $scope.subgroup = $scope.data.subgroup;
+            $scope.albumCount = $scope.data.albumCount;
             
             $scope.showAlbums = function(){
                 
