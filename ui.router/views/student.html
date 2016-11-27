@@ -1,21 +1,32 @@
 <div layout="column">
     <div layout="row">
         <div flex="none" style="width: 250px;" id="main-menu" layout="column" ng-controller="studentMenuController">
-            <div layout="row" ng-repeat="item in menuItems">
-                <div flex class="menu-item {{ activeMenuItem == item ? 'menu-item-active' : '' }}" ng-click="setActiveItem(item)">
-                    <md-icon md-svg-icon="images/icons/{{ item.icon }}.svg"></md-icon>    {{ item.text }}
+            <div layout="row">
+                <md-list flex>
+                    <md-list-item ng-repeat="item in menuItems" ng-click="setActiveItem(item)">
+                        <md-icon md-svg-icon="images/icons/{{ item.icon }}.svg"></md-icon>
+                        <p>{{ item.text }}</p>
+                    </md-list-item>
+                </md-list>
+                <md-divider></md-divider>
+            </div>
+            
+                <!--div flex class="menu-item {{ activeMenuItem == item ? 'menu-item-active' : '' }}" ng-click="setActiveItem(item)">
+                    <md-icon md-svg-icon="images/icons/{{ item.icon }}.svg"></md-icon>    
                 </div>
                 <div class="menu-pointer {{ activeMenuItem != item ? 'menu-pointer-hidden' : '' }}">
                     <div class="menu-pointer-inset"></div>
-                </div>
-            </div>
+                </div-->
             <!--div layout="row" id="search-box">
                 <md-input-container flex-offset="15" flex="75">
                     <md-icon md-svg-src="images/icons/search_icon.svg"></md-icon>
                     <input type="text">
                 </md-input-container>
             </div-->
-            <div class="filler" flex></div>
+            <div flex layout="row">
+                <span flex></span>
+                <md-divider></md-divider>
+            </div>
         </div>
         <div layout="column" flex style="overflow-y: scroll" stretch-down>
             <div ui-view="profile"></div>

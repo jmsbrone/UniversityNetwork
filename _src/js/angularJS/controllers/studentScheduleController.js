@@ -257,7 +257,7 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
     
     $scope.fixTabs = function(){
         if ($scope.$$phase){
-            $timeout($scope.fixTabs, 50);
+            $timeout($scope.fixTabs, 100);
             return;
         }
         var width = $('md-dialog md-pagination-wrapper').width();
@@ -278,7 +278,7 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
         for(i=0;i<$scope.labs.length;++i){
             $scope.labs[i].completed = $scope.labs[i].completed == '1';
         }
-        $timeout($scope.fixTabs, 100);
+        $timeout($scope.fixTabs, 250);
     }, function(response){
         console.debug(response);
     });
@@ -388,7 +388,7 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
                 break;
             case 'kr':
                 requestGroup = 'kr';
-                returnArray = 'kr';
+                returnArray = 'krs';
                 break;
             case 'test':
                 requestGroup = 'tests';
@@ -449,6 +449,10 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
     $scope.collectImagePath = function(file, cropSize){
         return location.origin + '/' + file.folder + '/' + file.name + '_' + cropSize + '.' + file.ext;
     };
+    
+    $scope.getFilePath = function(file){
+        return location.origin + '/' + file.folder + '/' + file.name + '.' + file.ext;
+    }
     
     $scope.confirmUpload = function(){
         api.upload('upload_mod','add',{

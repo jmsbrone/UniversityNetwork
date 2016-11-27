@@ -9,7 +9,7 @@
         </div>
     </md-toolbar>
     <md-dialog-content ng-cloak>
-        <div class="md-dialog-content">
+        <div>
             <md-content>
             <md-tabs md-dynamic-height md-border-bottom>
                 <md-tab label="Файлы">
@@ -50,45 +50,60 @@
                                 </div>
                             </div>
                         </form>
-                        <div ng-show="!addFileForm" layout="column">
-                            <md-button ng-click="addFileForm = true">Загрузить</md-button>
+                        <div ng-show="!addFileForm" layout="column" style="height: 600px">
+                            <md-button class="md-raised md-primary md-hue-2" ng-click="addFileForm = true">
+                                Загрузить
+                                <md-icon md-svg-icon="images/icons/ic_file_upload_black_24px.svg"></md-icon>
+                            </md-button>
                             <md-divider></md-divider>
-                            <h3>Картинки</h3>
-                            <div layout="row" layout-wrap layout-padding>
-                                <md-card ng-repeat="file in files" ng-if="file.type == 'img'">
-                                    <md-card-title>
-                                        <md-card-title-text></md-card-title-text>
-                                    </md-card-title>
-                                    <md-card-content layout="row">
-                                        <div class="md-media-xl card-media">
-                                            <img ng-src="{{collectImagePath(file, 640)}}" flex layout-fill>
-                                        </div>
-                                        <md-card-actions layout="column">
+                            <section>
+                                <md-subheader class="md-primary">Картинки</md-subheader>
+                                <div layout="row" layout-wrap layout-padding>
+                                    <md-card ng-repeat="file in files" ng-if="file.type == 'img'">
+                                        <md-card-title>
+                                            <md-card-title-text></md-card-title-text>
+                                        </md-card-title>
+                                        <md-card-content layout="row">
+                                            <div class="md-media-xl card-media" layout="row">
+                                                <img ng-src="{{collectImagePath(file, 640)}}" style="height:100%; max-height: 100%; max-width: 100%; margin: auto">
+                                            </div>
+                                            <md-card-actions layout="column">
+                                                <md-button class="md-icon-button" aria-label="download" href="{{collectImagePath(file, 640)}}" download>
+                                                    <md-icon md-svg-icon="images/icons/ic_file_download_black_24px.svg"></md-icon>
+                                                </md-button>
+                                                <md-button class="md-icon-button" aria-label="delete" ng-click="deleteFile(file)">
+                                                    <md-icon md-svg-icon="images/icons/ic_delete_forever_black_24px.svg"></md-icon>
+                                                </md-button>
+                                            </md-card-actions>
+                                        </md-card-content>
+                                    </md-card>
+                                </div>
+                            </section>
+                            <md-divider></md-divider>
+                            <section>
+                                <md-subheader class="md-primary">Документы</md-subheader>
+                                <div layout="row" layout-wrap layout-padding>
+                                    <div md-whiteframe="7" layout-padding ng-repeat="file in files" ng-if="file.type == 'doc'" layout-align="center center">
+                                        <div layout="row" layout-align="start center">
+                                            <div>{{ file.title }}</div>
+                                            <span flex></span>
+                                            <md-button class="md-icon-button" aria-label="download" href="{{getFilePath(file)}}" download="{{file.title}}">
+                                                <md-icon md-svg-icon="images/icons/ic_file_download_black_24px.svg"></md-icon>
+                                            </md-button>
                                             <md-button class="md-icon-button" aria-label="delete" ng-click="deleteFile(file)">
                                                 <md-icon md-svg-icon="images/icons/ic_delete_forever_black_24px.svg"></md-icon>
                                             </md-button>
-                                        </md-card-actions>
-                                    </md-card-content>
-                                </md-card>
-                            </div>
-                            <md-divider></md-divider>
-                            <h3>Документы</h3>
-                            <div layout="row" layout-wrap layout-padding>
-                                <div md-whiteframe="7" layout-padding ng-repeat="file in files" ng-if="file.type == 'doc'" layout-align="center center">
-                                    <div layout="row" layout-align="start center">
-                                        <div>{{ file.title }}</div>
-                                        <span flex></span>
-                                        <md-button class="md-icon-button" aria-label="delete" ng-click="deleteFile(file)">
-                                            <md-icon md-svg-icon="images/icons/ic_delete_forever_black_24px.svg"></md-icon>
-                                        </md-button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </section>
                             <md-divider></md-divider>
-                            <h3>Архивы</h3>
-                            <div layout="row" layout-wrap layout-padding>
-                            
-                            </div>
+                            <section>
+                                <md-subheader class="md-primary">Архивы</md-subheader>
+                                <div layout="row" layout-wrap layout-padding>
+
+                                </div>
+                            </section>                            
                         </div>
                     </md-content>
                 </md-tab>
@@ -146,6 +161,7 @@
                                 <md-list>
                                     <md-list-item class="md-3-line" ng-repeat="cg in cgs">
                                         <div class="md-list-item-text">
+                                            <h3>РГР</h3>
                                             <p>{{ cg.theme }}</p>
                                             <p>{{ cg.desc ? cg.desc : 'Описание отсутствует' }}</p>
                                         </div>
@@ -165,7 +181,7 @@
                                 <md-list>
                                     <md-list-item class="md-3-line" ng-repeat="kr in krs">
                                         <div class="md-list-item-text">
-                                            <h3>Контрольная работа №{{ $i+1 }}</h3>
+                                            <h3>Контрольная работа</h3>
                                             <p>{{ kr.theme }}</p>
                                         </div>
                                         <md-switch class="md-secondary md-warn" ng-model="kr.completed" ng-change="updateStatus('kr', kr)"></md-switch>
