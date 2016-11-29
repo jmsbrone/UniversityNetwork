@@ -1,11 +1,11 @@
 app.controller('studentMenuController', ['$scope', '$state', '$timeout', function($scope, $state, $timeout){
     $scope.menuItems = [
-        {
+        /*{
             text: 'Профиль',
             icon: 'ic_face_black_24px',
             state: 'profile'
         },
-        /*{
+        {
             text: 'Новости',
             icon: 'ic_library_books_black_24px',
             state: 'news'
@@ -32,7 +32,7 @@ app.controller('studentMenuController', ['$scope', '$state', '$timeout', functio
         $state.go('app.student.'+item.state);
     };
     if ($state.current.name == 'app.student'){
-        $state.go('app.student.profile');
+        $state.go('app.student.schedule');
         $scope.activeMenuItem = $scope.menuItems[0];
     } else {
         var state_parts = $state.current.name.split('.');

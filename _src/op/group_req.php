@@ -10,7 +10,6 @@ switch($data['type']){
         $query = "
             SELECT
                 `groupProgram`.*,
-                `subgroup`.`students_id` AS `studentID`,
                 `subgroup`.`index` AS `subgroup`
             FROM
                 (SELECT 
@@ -48,9 +47,10 @@ switch($data['type']){
                 `SUbgroupStudent` AS `subgroup` ON `subgroup`.`program_id` = `groupProgram`.`id`
             WHERE
                 `groupProgram`.`semesterID` = $semesterID
-                    AND (`subgroup`.`students_id` = $userID
-                    OR `groupProgram`.`groupID` = $groupID)
-            ORDER BY `subjectName`";
+                    AND `groupProgram`.`groupID` = $groupID
+            GROUP BY `groupProgram`.`subjectID`
+            ORDER BY `subjectName`
+            ";
         
         if ($result = $mysql->query($query)){
             $output = array();

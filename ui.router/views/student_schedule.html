@@ -6,29 +6,23 @@
     </div>
     <div layout="row">
         <div flex layout="column" id="schedule-container">
-            <div layout="row" layout-align="center stretch" class="schedule-color" ng-attr-style="background: rgb({{ colorHeader.red }}, {{ colorHeader.green }}, {{ colorHeader.blue }})">
-                <div class="schedule-cell schedule-header"></div>
-                <div class="schedule-cell schedule-header" ng-class="{'schedule-cell-active' : activeDay == (d.getDay() - 1)}" ng-attr-style="{{ getHeaderStyle(d) }}" ng-repeat="d in dates" flex layout-align="center center">
+            <div layout="row" layout-align="center stretch" class="schedule-color">
+                <div class="schedule-cell" md-colors="{background: 'default-primary'}"></div>
+                <div class="schedule-cell" ng-repeat="d in dates" flex layout-align="center center" md-colors="{background: 'default-primary'}">
                     <p>{{ d | rdate:'WD' }} <b>{{ d | rdate: 'dd.mm' }}</b></p>
                 </div>
             </div>
             <div>
                 <div layout="row" ng-repeat="order in [0,1,2,3] track by $index" class="schedule-color">
-                    <div class="schedule-cell" layout-align="center center" layout="row">
+                    <div class="schedule-cell" layout-align="center center" layout="row" md-colors="{'background': (order % 2 == 0) ? 'default-primary-hue-1' : 'default-primary'}">
                         <p>{{ times[order] }}</p>
                     </div>
-                    <div md-whiteframe="5" ng-repeat="day in [0,1,2,3,4] track by $index" class="schedule-cell" ng-class="{'schedule-cell-active' : activeDay == day}" ng-attr-style="{{ getRowStyle(day, order) }}" flex>
+                    <div md-whiteframe="2" ng-repeat="day in [0,1,2,3,4] track by $index" ng-class="{'schedule-cell-active' : activeDay == day}" md-colors="{'background': (order % 2 == 0) ? 'default-background-hue-3' : 'default-background-hue-2'}" flex>
                         <div layout="row" ng-if="checkSubgroup(classes[day][order])" layout-padding ng-click="onClassClick(classes[day][order], $event)">
                             <div layout="column" flex>
                                 <div><b>{{ getClassType(classes[day][order]) + ' ' + classes[day][order].subjectName }} {{ classes[day][order].subgroup ? ('(' + classes[day][order].subgroup + ')') : '' }}</b></div>
                                 <div>{{ getProfName(day, order) }}</div>
                                 <label ng-repeat="room in classes[day][order].rooms">{{ room.name }}</label>
-                                <!--div layout="row">
-                                    <span flex></span>
-                                    <md-button class="md-warn md-raised class-add-asg-button" ng-click="openSelection($event, classes[day][order])" ng-if="canHaveAsg(classes[day][order])">
-                                        <md-icon md-svg-icon="images/icons/ic_note_add_black_24px.svg"></md-icon>
-                                    </md-button>    
-                                </div-->
                             </div>
                         </div>
                     </div>
@@ -37,34 +31,4 @@
         </div>
     </div>
     <md-divider></md-divider>
-
-    <!--div layout="row" layout-wrap layout-padding>
-        <div layout="column" flex="25" ng-repeat="val in [colorHeader, colorActiveHeader, colorTimeOdd, colorTimeEven, colorOdd, colorEven, colorOddActive, colorEvenActive]">
-            <h4>{{ val.title }}</h4>
-            <md-slider-container>
-                <span>R</span>
-                <md-slider flex min="0" max="255" ng-model="val.red" aria-label="red" class="red-slider">
-                </md-slider>
-                <md-input-container>
-                    <input flex type="number" ng-model="val.red" aria-label="red" aria-controls="red-slider">
-                </md-input-container>
-            </md-slider-container>
-            <md-slider-container>
-                <span>G</span>
-                <md-slider flex ng-model="val.green" min="0" max="255" aria-label="green" class="green-slider" class="md-accent">
-                </md-slider>
-                <md-input-container>
-                    <input flex type="number" ng-model="val.green" aria-label="green" aria-controls="green-slider">
-                </md-input-container>
-            </md-slider-container>
-            <md-slider-container>
-                <span class="md-body-1">B</span>
-                <md-slider flex ng-model="val.blue" min="0" max="255" aria-label="blue" class="blue-slider" class="md-primary">
-                </md-slider>
-                <md-input-container>
-                    <input flex type="number" ng-model="val.blue" aria-label="blue" aria-controls="blue-slider">
-                </md-input-container>
-            </md-slider-container>
-        </div>
-    </div-->
 </md-content>

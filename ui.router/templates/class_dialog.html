@@ -1,4 +1,4 @@
-<md-dialog aria-label="Class Dialog" style="width: 60%; height: 80%; max-width: 850px">
+<md-dialog aria-label="Class Dialog">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>{{ classObj.id }}</h2>
@@ -9,11 +9,11 @@
         </div>
     </md-toolbar>
     <md-dialog-content ng-cloak>
-        <div>
+        <div class="md-dialog-content">
             <md-content>
             <md-tabs md-dynamic-height md-border-bottom>
                 <md-tab label="Файлы">
-                    <md-content>
+                    <md-content style="height: {{getContentHeight()}}px" id="tabs-content">
                         <form ng-show="addFileForm" name="newUploadForm" layout="column">
                             <div layout="row" layout-align="start center">
                                 <md-button ng-click="addFileForm = false">&lt;- Назад</md-button>
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
                         </form>
-                        <div ng-show="!addFileForm" layout="column" style="height: 600px">
+                        <div ng-show="!addFileForm" layout="column">
                             <md-button class="md-raised md-primary md-hue-2" ng-click="addFileForm = true">
                                 Загрузить
                                 <md-icon md-svg-icon="images/icons/ic_file_upload_black_24px.svg"></md-icon>

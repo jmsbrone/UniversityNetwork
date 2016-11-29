@@ -10,26 +10,13 @@
                 </md-list>
                 <md-divider></md-divider>
             </div>
-            
-                <!--div flex class="menu-item {{ activeMenuItem == item ? 'menu-item-active' : '' }}" ng-click="setActiveItem(item)">
-                    <md-icon md-svg-icon="images/icons/{{ item.icon }}.svg"></md-icon>    
-                </div>
-                <div class="menu-pointer {{ activeMenuItem != item ? 'menu-pointer-hidden' : '' }}">
-                    <div class="menu-pointer-inset"></div>
-                </div-->
-            <!--div layout="row" id="search-box">
-                <md-input-container flex-offset="15" flex="75">
-                    <md-icon md-svg-src="images/icons/search_icon.svg"></md-icon>
-                    <input type="text">
-                </md-input-container>
-            </div-->
             <div flex layout="row">
                 <span flex></span>
                 <md-divider></md-divider>
             </div>
         </div>
         <div layout="column" flex style="overflow-y: scroll" stretch-down>
-            <div ui-view="profile"></div>
+            <!--div ui-view="profile"></div>
             <!--div ui-view="news"></div>
             <div ui-view="group"></div-->
             <div ui-view="schedule"></div>

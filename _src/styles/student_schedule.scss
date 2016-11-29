@@ -11,29 +11,42 @@ $min-width: 75px;
 
 $cellPadding: 5px;
 
+@mixin media($attr, $value_480, $value_720, $value_1080){
+    @media screen and (min-width: 480px) and (max-width: 720px){
+        #{$attr}: $value_480;
+    }
+    @media screen and (min-width: 721px) and (max-width: 1366px){
+        #{$attr}: $value_720;
+    }
+    @media screen and (min-width: 1367px){
+        #{$attr}: $value_1080;
+    }
+}
+
 .schedule-color {
     &:nth-child(odd){
-        background-color: $odd;
+        //background-color: $odd;
         
         &>.schedule-cell:first-child {
-            background-color: $oddMain;
+            //background-color: $oddMain;
         }
         &>.schedule-cell-active {
-            background: $oddFocused;
+            //background: $oddFocused;
         }
     }
     &:nth-child(even){
-        background-color: $even;
+        //background-color: $even;
         
         &>.schedule-cell:first-child {
-            background-color: $evenMain;
+            //background-color: $evenMain;
         }
         &>.schedule-cell-active {
-            background: $evenFocused;
+            //background: $evenFocused;
         }
     }
     
     .schedule-cell {
+        
         min-height : $min-height;
         cursor: pointer;
         
@@ -60,10 +73,10 @@ $cellPadding: 5px;
         //background: #e2efda;
         
         &.schedule-cell-active {
-            background: #c6e0b4;
+            //background: #c6e0b4;
         }
         &:first-child {
-            background: transparent !important;
+            //background: transparent !important;
         }
     }
     
@@ -77,4 +90,18 @@ $cellPadding: 5px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     margin: 15px;
     border-radius: 2px;
+}
+md-dialog {
+    width: 60%;
+    height: 80%;
+    & .md-dialog-content {
+        padding: 0px !important;
+    }
+    @media screen and (min-width: 1366px){
+        max-width: 850px;
+    }
+    
+    @media screen and (min-width: 720px){
+        max-width: 500px;
+    }
 }

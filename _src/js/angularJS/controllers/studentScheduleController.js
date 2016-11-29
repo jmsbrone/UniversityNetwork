@@ -117,79 +117,6 @@ app.controller('studentScheduleController', ['$scope', '$mdPanel', '$mdDialog', 
         return false;
     }
     
-    // Header color
-    $scope.colorHeader = {
-        red: 48, green: 172, blue: 149,
-        title: 'Фон заголовка'
-    };
-    $scope.colorActiveHeader = {
-        red: 21, green: 82, blue: 77,
-        title: 'Фон заголовка (активный)'
-    };
-    $scope.colorTimeOdd = {
-        red: 97, green: 121, blue: 125,
-        title: '1й столбец (нечет)'
-    };
-    $scope.colorTimeEven = {
-        red: 0, green: 137, blue: 114,
-        title: '1й столбец (чет)'
-    };
-    $scope.colorOdd = {
-        red: 201, green: 201, blue: 128,
-        title: 'Нечетные строки'
-    };
-    $scope.colorEven = {
-        red: 130, green: 172, blue: 123,
-        title: 'Четные строки'
-    };
-    $scope.colorOddActive = {
-        red: 120, green: 120, blue: 78,
-        title: 'Нечетные строки (активный)'
-    };
-    $scope.colorEvenActive = {
-        red: 79, green: 119, blue: 82,
-        title: 'Четные строки (активный)'
-    };
-    var buildColor = function(color){
-        return 'rgb(' + color.red +',' + color.green +',' + color.blue +')';
-    }
-    $scope.getRowStyle = function(day, order){
-        if (order % 2 != 0){
-            return 'background: ' + (($scope.activeDay == day) ? buildColor($scope.colorEvenActive) : buildColor($scope.colorEven));
-        }
-        return 'background: ' + (($scope.activeDay == day) ? buildColor($scope.colorOddActive) : buildColor($scope.colorOdd));
-    };
-    
-    $scope.getHeaderStyle = function(d){
-        return ($scope.activeDay == (d.getDay() - 1)) ? ('background: rgb(' + $scope.colorActiveHeader.red +',' + $scope.colorActiveHeader.green +',' + $scope.colorActiveHeader.blue +')') : '';
-    }
-    var updateOddFn = function(){
-        try{
-            var color = $scope.colorTimeOdd;
-            var background = 'rgb(' + color.red +',' + color.green +',' + color.blue +')';
-            $('.schedule-color:nth-child(odd) > div:first-child').css('background', background);
-        }catch(err){}
-    };
-    var updateEvenFn = function(){
-        try{
-            var color = $scope.colorTimeEven;
-            var background = 'rgb(' + color.red +',' + color.green +',' + color.blue +')';
-            $('.schedule-color:nth-child(even) > div:first-child').css('background', background);
-        }catch(err){}
-    };
-    $timeout(function(){
-        updateOddFn();
-        updateEvenFn();
-    }, 500);
-    
-    $scope.$watch('colorTimeOdd.red', updateOddFn);
-    $scope.$watch('colorTimeOdd.green', updateOddFn);
-    $scope.$watch('colorTimeOdd.blue', updateOddFn);
-    
-    $scope.$watch('colorTimeEven.red', updateEvenFn);
-    $scope.$watch('colorTimeEven.green', updateEvenFn);
-    $scope.$watch('colorTimeEven.blue', updateEvenFn);
-    
     $scope.openSelection = function($event, cl){
         var position = $mdPanel.newPanelPosition()
             .relativeTo($event.target.closest('button'))
@@ -263,6 +190,10 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
         var width = $('md-dialog md-pagination-wrapper').width();
         $('md-dialog md-pagination-wrapper').width(width + 1);
     };
+    
+    $scope.getContentHeight = function(){
+        return $('md-dialog').height() + $('md-dialog').offset().top - $('#tabs-content').offset().top - 5;
+    }
     
     //------------------------------------------------------------------
     // Assignments.

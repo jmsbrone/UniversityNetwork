@@ -5,7 +5,7 @@ app.controller('registerController', ['$scope', 'api', '$state', '$mdDialog', fu
     var prompt = $mdDialog.prompt()
         .title('Требуется код регистрации')
         .textContent('Код является персональным и используется для регистрации в системе.')
-        .placeholder('')
+        .placeholder('148adf')
         .ariaLabel('hash')
         .ok('Подтвердить')
         .cancel('Закрыть');

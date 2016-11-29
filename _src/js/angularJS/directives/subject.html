@@ -1,15 +1,17 @@
-<div md-whiteframe="7">
-    <div>{{ subjectName }}</div>
-    <div ng-click="showAlbums()">Альбомы: {{ albumCount }}</div>
-    <div title="{{ fullName }}">{{ assignedProf }}</div>
+<div md-whiteframe="7" layout="column">
+    <div flex="25">
+        <p>{{ subjectName }}</p>
+    </div>
+    <div flex="30" ng-click="showAlbums()">Альбомы: {{ albumCount }}</div>
+    <div flex="10" title="{{ fullName }}">{{ assignedProf }}</div>
     <div flex></div>
-    <div layout="row">
+    <div layout="row" flex="30">
         <div flex="10"></div>
         <div flex layout="column">
-            <div style="text-align: center" ng-click="asgClick()">Работы</div>
+            <div flex="25" style="text-align: center" ng-click="asgClick()">Работы</div>
             <md-divider></md-divider>
-            <div style="text-align: center">
-                <md-input-container md-no-float class="md-block">
+            <div style="text-align: center" flex>
+                <md-input-container md-block style="width: 100%">
                     <label>Подгруппа</label>
                     <md-select ng-model="subgroup" ng-change="subgroupChanged()">
                         <md-option value=""></md-option>
