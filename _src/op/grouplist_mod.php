@@ -46,7 +46,7 @@ switch($data['type']){
         $groupID = checkInt($data['groupID']);
         $surname = checkString($data['surname']);
         $name = checkString($data['name']);
-        $lastname = checkString($data['surname']);
+        $lastname = checkString($data['lastname']);
         $hash = generateHash();
         $query = "
             -- Создание аккаунта

@@ -3,4 +3,6 @@ app.controller('mainController', ['$scope', '$state', function($scope, $state){
         if ($state.current.name.search(st) > 0) return true;
         return false;
     };
+    
+    $scope.state = $state.current;
 }]);

@@ -23,9 +23,12 @@ function checkInt($myVar){
     throw403('missing parameter');
 }
 
-function checkString($myVar){
-    if (isset($myVar)) return $myVar;
-    throw403('missing parameter');
+function checkString($myVar, $min, $max){
+    if (!isset($myVar)) throw403('Данные отсутствуют');
+    if (isset($min) && strlen($myVar) < $min) throw403('Неверный размер строки');
+    if (isset($max) && strlen($myVar) > $max) throw403('Неверный размер строки');
+    
+    return $myVar;
 }
 
 function _checkDate($myVar){
@@ -197,7 +200,10 @@ $requestMasks = array(
     #
     'upload_mod_add' => 6,
     'upload_req_class_files' => 6,
-    'upload_mod_delete' => 6
+    'upload_mod_delete' => 6,
+    
+    # Debug/Info
+    'request_time_client' => 31
 );
 
 # Composing type.

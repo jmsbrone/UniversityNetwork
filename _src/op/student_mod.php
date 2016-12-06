@@ -2,10 +2,10 @@
 
 switch($data['type']){
     case 'add':
-        $groupID = checkInt($data['groupID']);
-        $surname = checkString($data['surname']);
-        $name = checkString($data['name']);
-        $lastname = checkString($data['lastname']);
+        $groupID = $data['groupID'] ?? -1;
+        $surname = checkString($data['surname'], 3, 16);
+        $name = checkString($data['name'], 3, 16);
+        $lastname = checkString($data['lastname'], 3, 16);
         $hash = generateHash();
         
         $query = "
@@ -33,9 +33,9 @@ switch($data['type']){
         );
         break;
     case 'register':
-        $login = checkString($data['login']);
-        $pswHash = password_hash(checkString($data['psw']), PASSWORD_DEFAULT);
-        $hash = checkString($data['hash']);
+        $login = checkString($data['login'], 3, 16);
+        $pswHash = password_hash(checkString($data['psw'], 4, 16), PASSWORD_DEFAULT);
+        $hash = checkString($data['hash'], 5, 10);
         
         $query = "
             -- Обновление аккаунта
@@ -51,7 +51,7 @@ switch($data['type']){
             if ($mysql->affected_rows == 0) throw403();
             $mysql->query("UPDATE `Invites` SET `Used` = TRUE WHERE `Hash` LIKE '$hash'");
             $output = array();
-        } else throw403();
+        } else throw403('Выбранный логин занят');
         
         $data['type'] = 'login';
         require "auth_req.php";

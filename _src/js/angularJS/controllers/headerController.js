@@ -9,7 +9,7 @@ app.controller('headerController', ['$scope', 'api', '$state', 'storage', functi
     };
     $scope.signOut = function(){
         $state.go('app.main');
-        api.get('auth_req', 'signout', {}).then(null, null);
+        api.post('auth_req', 'signout', {},null, null);
     };
     
 }]);

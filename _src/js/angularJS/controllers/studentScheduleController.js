@@ -192,7 +192,12 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
     };
     
     $scope.getContentHeight = function(){
-        return $('md-dialog').height() + $('md-dialog').offset().top - $('#tabs-content').offset().top - 5;
+        try{
+            var newHeight = $('md-dialog').height() + $('md-dialog').offset().top - $('#tabs-content').offset().top - 5;
+            return newHeight;
+        } catch(err){
+            console.debug('Error during setting height: ' + err);
+        }
     }
     
     //------------------------------------------------------------------
@@ -201,9 +206,9 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
     $scope.labs = [];
     $scope.newAsg = {};
     
-    api.get('lab_mod', 'class_list', {
+    api.post('lab_mod', 'class_list', {
         classID: $scope.classObj.id
-    }).then(function(response){
+    },function(response){
         console.debug(response);
         $scope.labs = response.data;
         for(i=0;i<$scope.labs.length;++i){
@@ -214,9 +219,9 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
         console.debug(response);
     });
     
-    api.get('cg_mod', 'class_list', {
+    api.post('cg_mod', 'class_list', {
         classID: $scope.classObj.id
-    }).then(function(response){
+    },function(response){
         console.debug(response);
         $scope.cgs = response.data;
         for(i=0;i<$scope.cgs.length;++i){
@@ -226,9 +231,9 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
         console.debug(response);
     });
     
-    api.get('kr_mod', 'class_list', {
+    api.post('kr_mod', 'class_list', {
         classID: $scope.classObj.id
-    }).then(function(response){
+    },function(response){
         console.debug(response);
         $scope.krs = response.data;
         for(i=0;i<$scope.krs.length;++i){
@@ -238,9 +243,9 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
         console.debug(response);
     });
     
-    api.get('tests_mod', 'class_list', {
+    api.post('tests_mod', 'class_list', {
         classID: $scope.classObj.id
-    }).then(function(response){
+    },function(response){
         console.debug(response);
         $scope.tests = response.data;
         for(i=0;i<$scope.tests.length;++i){
@@ -274,7 +279,7 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
                 returnArray = 'tests';
                 break;
         }
-        api.get(request, $scope.modifyAsg ? 'modify' : 'add', $scope.newAsg)
+        api.post(request, $scope.modifyAsg ? 'modify' : 'add', $scope.newAsg)
             .then(function(response){
                 if (!$scope.modifyAsg){
                     $scope.newAsg.id = response.data.id;
@@ -294,9 +299,9 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
         asg._count++;
         $timeout(function(){
             if (--asg._count != 0) return;
-            api.get(type+'_mod', asg.completed ? 'set' : 'unset',{
+            api.post(type+'_mod', asg.completed ? 'set' : 'unset',{
                 asgID: asg.id
-            }).then(function(response){
+            },function(response){
                 
             }, function(response){
                 console.debug(response);
@@ -326,9 +331,9 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
                 returnArray = 'tests';
                 break;
         }
-        api.get(requestGroup + '_mod', 'delete', {
+        api.post(requestGroup + '_mod', 'delete', {
             id: asg.id
-        }).then(function(response){
+        },function(response){
             $scope[returnArray] = flib.eject($scope[returnArray], asg);
         }, function(response){
             console.debug(response);
@@ -368,9 +373,9 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
         });
     }, 1500);
     
-    api.get('upload_req', 'class_files', {
+    api.post('upload_req', 'class_files', {
         classID: $scope.classObj.id
-    }).then(function(response){
+    },function(response){
         console.debug(response);
         $scope.files = response.data;
     }, function(response){
@@ -390,7 +395,7 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
             classID: $scope.classObj.id,
             filenames: $scope.uploadFiles,
             files: $('#upload-file')[0].files
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.addFileForm = false;
             $scope.uploadFiles = [];
@@ -405,9 +410,9 @@ app.controller('classDialogController', ['$scope', '$mdDialog', 'flib', 'classOb
     };
     
     $scope.deleteFile = function(file){
-        api.get('upload_mod', 'delete', {
+        api.post('upload_mod', 'delete', {
             uploadID: file.id
-        }).then(function(response){
+        },function(response){
             $scope.files = flib.eject($scope.files, file);
         }, function(response){
             console.debug(response);

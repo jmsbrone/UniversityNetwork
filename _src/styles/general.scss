@@ -1,0 +1,12 @@
+@keyframes fadingIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1
+    }
+}
+.fade-in {
+    animation-name: fadingIn;
+    animation-duration: 1s;
+}

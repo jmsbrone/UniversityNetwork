@@ -1,3 +1,99 @@
+<div layout="column" class="fade-in">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h3>Регистрация</h3>
+            <span flex></span>
+            <md-button class="md-icon-button" ui-sref="app.main">
+                <md-icon md-svg-icon="images/icons/ic_clear_black_24px.svg"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <div layout-padding>
+        <h4>Регистрация осуществляется в 3 этапа.</h4>
+    </div>
+    <md-divider></md-divider>
+    <div ng-show="registerStage == 0" layout-padding>
+        <h5>Этап 1: Ввод кода регистрации.</h5>
+        <p>У вас имеется 7-значный код (длина может отличаться). Этот код является вашим уникальным идентификатором для получения доступа к регистрации в системе. После окончания регистрации код перестанет действовать.</p>
+        <div layout="row" layout-align="start center">
+            <md-input-container flex="25">
+                <label>Код</label>
+                <input type="text" ng-model="inviteHash" ng-keyup="checkHash($event)" required>
+            </md-input-container>
+            <md-button ng-click="checkHash()">Проверить</md-button>
+        
+            <div md-whiteframe="4" ng-show="hashError" md-colors="{'background': 'warn'}" layout="row" flex="33" layout-align="start center">
+                <div flex="10" flex-offset="5">
+                    <md-icon md-svg-icon="images/icons/ic_error_black_24px.svg"></md-icon>
+                </div>
+                <span flex="5"></span>
+                <p flex style="font-size:14px">Неверный код</p>
+                <span flex></span>
+                <div ng-click="hashError = null" style="cursor:pointer">
+                    <md-icon md-svg-icon="images/icons/ic_clear_black_24px.svg" ></md-icon>
+                </div>
+                <span flex="5"></span>
+            </div>
+        </div>
+    </div>
+    <md-divider></md-divider>
+    <div ng-show="registerStage == 1" layout-padding>
+        <h5>Этап 2: Проверка данных.</h5>
+        <p>Студент: {{ user.surname }} {{ user.name }} {{ user.lastname }}</p>
+        <p>Группа: {{ user.groupName }}</p>
+        <h5>Если имеются ошибки в ваших данных или данные являются не вашими, просьба обратиться к администратору.</h5>
+        <md-button class="md-raised md=primary" ng-click="registerStage = 2">Продолжить</md-button>
+    </div>
+    <md-divider></md-divider>
+    <div ng-show="registerStage == 2" layout-padding>
+        <h5>Этап 3: Ввод данных для входа в систему.</h5>
+        <p>Укажите ваш логин и пароль, которые вы будете использовать для входа в систему.</p>
+        <div layout="row" style="margin-top: 20px">
+            <div flex="25"></div>
+            <form flex layout="column" name="registerForm">
+                <md-input-container flex>
+                    <label>Логин</label>
+                    <input type="text" name="login" ng-model="login" minlength="4" maxlength="16" required>
+                    <div flex ng-messages="registerForm.login.$error" role="alert">
+                        <div ng-message="required">Обязательное поле</div>
+                        <div ng-message-exp="['minlength', 'maxlength']">Требуется 4-16 символов</div>
+                    </div>
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <label>Пароль</label>
+                    <input type="password" name="psw" ng-model="psw" required>
+                    <div ng-messages="registerForm.psw.$error" role="alert">
+                        <div ng-message="required">Обязательное поле</div>
+                    </div>
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <label>Повторите пароль</label>
+                    <input type="password" name="psw_copy" ng-model="psw_copy" required ng-keyup="confirm($event)">
+                    <div ng-messages="registerForm.psw_copy.$error" role="alert">
+                        <div ng-message="required">Обязательное поле</div>
+                    </div>
+                </md-input-container>
+                <div md-whiteframe="8" ng-show="error" md-colors="{'background': 'warn'}" layout="row" flex layout-align="start center">
+                    <div flex="10" flex-offset="5">
+                        <md-icon md-svg-icon="images/icons/ic_error_black_24px.svg" layout-fill></md-icon>
+                    </div>
+                    <span flex="5"></span>
+                    <p flex style="font-size:14px">{{ error }}</p>
+                    <span flex></span>
+                    <div ng-click="error = null" style="cursor:pointer">
+                        <md-icon md-svg-icon="images/icons/ic_clear_black_24px.svg" ></md-icon>
+                    </div>
+                    <span flex="5"></span>
+                </div>
+                <md-button class="md-raised md-primary" ng-click="confirm()" ng-disabled="registerForm.$invalid || httpPending">Войти</md-button>
+            </form>
+            <div flex="25">
+                <md-progress-circular ng-disabled="!httpPending" ng-show="httpPending" class="md-hue-2" md-diameter="40px"></md-progress-circular>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Old 
 <div flex layout="column" layout-align="center center">
     <div ng-show="managerRegister">
         <form layout="column" name="managerRegisterForm">
@@ -43,4 +139,4 @@
             <md-button ng-click="register()" ng-show="studentRegisterForm.$valid">Register</md-button>
         </form>
     </div>
-</div>
+</div>-->

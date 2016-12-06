@@ -12,7 +12,7 @@ switch($data['type']){
             $accountID = $row[0];
             $hash = $row[1];
             $result->free();
-        } else throw403();
+        } else throw403('Неверный логин/пароль');
 
         if (!password_verify($psw, $hash)) throw403();
 
@@ -68,7 +68,10 @@ switch($data['type']){
                 $result = $mysql->query("SELECT `Surname`, `Name`, `Lastname`, `Groups_ID` FROM `Students` WHERE `Accounts_ID` = {$row[1]}");
                 if (!$result) throw403();
                 $studentRow = $result->fetch_row();
-                $groupRow = $mysql->query("SELECT `Name` FROM `Groups` WHERE `ID` = {$studentRow[3]}")->fetch_row();
+                if (!$studentRow) throw403("Код устарел");
+                $groupRow = $mysql->query("SELECT `Name` FROM `Groups` WHERE `ID` = {$studentRow[3]}");
+                if (!$groupRow) throw403('Группа не существует');
+                $groupRow = $groupRow->fetch_row();
                 $output = array(
                     'type' => 'student',
                     'surname' => $studentRow[0],

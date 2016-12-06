@@ -1,12 +1,45 @@
-<div flex layout="column" layout-align="center center">
-    <md-input-container>
-        <label>Логин</label>
-        <input ng-model="login">
-    </md-input-container>
-    <md-input-container>
-        <label>Пароль</label>
-        <input ng-model="psw" type="password">
-    </md-input-container>
-    <md-button class="md-raised md-primary" ng-click="confirm()">Войти</md-button>
-    <md-button class="md-raised" ui-sref="app.main">Закрыть</md-button>
+<div layout="column" class="fade-in">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h3>Вход</h3>
+            <span flex></span>
+            <md-progress-circular ng-disabled="!httpPending" ng-show="httpPending" class="md-hue-2" md-diameter="20px"></md-progress-circular>
+        </div>
+    </md-toolbar>
+    <div layout="row" style="margin-top: 20px">
+        <div flex="5"></div>
+        <form flex layout="column" name="loginForm">
+            <md-input-container flex>
+                <label>Логин</label>
+                <input type="text" name="login" ng-model="login" minlength="4" maxlength="16" required>
+                <div flex ng-messages="loginForm.login.$error" role="alert">
+                    <div ng-message="required">Обязательное поле</div>
+                    <div ng-message-exp="['minlength', 'maxlength']">Требуется 4-16 символов</div>
+                </div>
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Пароль</label>
+                <input type="password" name="psw" ng-model="psw" required ng-keyup="confirm($event)">
+                <div ng-messages="loginForm.psw.$error" role="alert">
+                    <div ng-message="required">Обязательное поле</div>
+                </div>
+            </md-input-container>
+            <div md-whiteframe="8" ng-show="error" md-colors="{'background': 'warn'}" layout="row" flex layout-align="start center">
+                <div flex="10" flex-offset="5">
+                    <md-icon md-svg-icon="images/icons/ic_error_black_24px.svg" layout-fill></md-icon>
+                </div>
+                <span flex="5"></span>
+                <p flex style="font-size:14px">{{ error }}</p>
+                <span flex></span>
+                <div ng-click="error = null" style="cursor:pointer">
+                    <md-icon md-svg-icon="images/icons/ic_clear_black_24px.svg" ></md-icon>
+                </div>
+                <span flex="5"></span>
+            </div>
+            <md-button class="md-raised md-primary" ng-click="confirm()" ng-disabled="loginForm.$invalid || httpPending">Войти</md-button>
+            <md-divider></md-divider>
+            <md-button ui-sref="app.main">Закрыть</md-button>
+        </form>
+        <div flex="5"></div>
+    </div>
 </div>

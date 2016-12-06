@@ -19,9 +19,9 @@ app.service('storage', ['api', '$timeout', '$state', function(api, $timeout, $st
         }
     };
     var updateSubjectList = function(){
-        api.get('group_req','subject_list', {
+        api.post('group_req','subject_list', {
             semesterID: obj.semester.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             obj.program = response.data;
         }, function(response){
@@ -30,7 +30,7 @@ app.service('storage', ['api', '$timeout', '$state', function(api, $timeout, $st
         });
     };
     var updateSchedule = function(){
-        api.get('schedule_mod', 'list', {}).then(function(response){
+        api.post('schedule_mod', 'list', {},function(response){
             obj.rules = response.data;
         }, function(response){
             console.debug(response);
@@ -42,7 +42,7 @@ app.service('storage', ['api', '$timeout', '$state', function(api, $timeout, $st
             $timeout(updateFn, 500);
             return;
         }
-        api.get('semester_mod', 'list',{}).then(function(response){
+        api.post('semester_mod', 'list',{},function(response){
             console.debug(response);
             var now = new Date();
             for(i=0;i<response.data.length;++i){

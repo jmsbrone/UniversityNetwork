@@ -1,18 +1,34 @@
-<div layout="row">
-    <div flex></div>
-    <div layout="row" flex="40" layout-align="center center">
-        <div layout="column" flex>
-            <div layout="row" layout-align="space-around center">
-                <md-button class="md-raised" ng-class="{'md-primary': checkState('login')}" ui-sref="app.main.login">Вход</md-button>
-                <md-button class="md-raised" ng-class="{'md-primary': checkState('register')}" ui-sref="app.main.register">Регистрация</md-button>
-            </div>
-            <div layout="row">
-                <div flex></div>
-                <div ui-view="login"></div>
-                <div ui-view="register"></div>
-                <div flex></div>
-            </div>
+<div layout="row" md-whiteframe="2" md-colors="{'background': 'primary'}" ng-show="!checkState('login') && !checkState('register')">
+    <div flex-gt-sm></div>
+    <div flex-lg="60" flex-md="80" flex-sm flex layout="column" style="height:400px" layout-align="center start" layout-padding>
+        <div flex></div>
+        <div layout="row">
+            <div flex></div>
+            <h2>Информационный ресурс для студентов</h2>
+            <div flex></div>
         </div>
+        <div layout="row" layout-align="start stretch">
+            <md-button class="md-raised" ng-class="{'md-primary': checkState('login')}" ui-sref="app.main.login">Вход</md-button>
+            <md-button class="md-raised" ng-class="{'md-primary': checkState('register')}" ui-sref="app.main.register">Регистрация</md-button>
+        </div>
+        <div flex></div>
     </div>
-    <div flex></div>
+    <div flex-gt-sm></div>
+</div>
+<div layout="row" flex layout-align="center center">
+    <div ng-if="checkState('login')" layout="row" flex-lg="40" flex-md="60">
+        <div flex-gt-sm="30"></div>
+        <div flex layout="column" md-whiteframe="5" style="margin-bottom: 10px">
+            <div ui-view="login"></div>
+        </div>
+        <div flex-gt-sm="30"></div>
+    </div>
+
+    <div ng-if="checkState('register')" flex flex-lg="70" flex-md="85" flex-xl="60">
+        <div flex-gt-sm="20"></div>
+         <div layout="column" md-whiteframe="5" style="margin-bottom: 10px">
+            <div ui-view="register"></div>
+        </div>
+        <div flex-gt-sm="20"></div>
+    </div>
 </div>

@@ -31,7 +31,7 @@ app.directive('subject', ['$mdDialog', 'api', 'storage', function($mdDialog, api
             };
             $scope.subgroupChanged = function(){
                 if (!$scope.subgroup) return;
-                api.get('subgroup_mod', 'select',{
+                api.post('subgroup_mod', 'select',{
                     index: $scope.subgroup,
                     programID: $scope.data.id
                 }).then(function(response){

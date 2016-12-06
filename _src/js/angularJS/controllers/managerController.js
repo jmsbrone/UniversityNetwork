@@ -21,7 +21,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     }];
 
     // Getting departments.
-    api.get('dep_mod', 'list', {})
+    api.post('dep_mod', 'list', {})
     .then(function(response){
         console.debug('departments');
         console.debug(response);
@@ -31,7 +31,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     });
     
     // Getting subjects.
-    api.get('subject_mod', 'list', {})
+    api.post('subject_mod', 'list', {})
     .then(function(response){
         console.debug('subjects');
         console.debug(response);
@@ -41,7 +41,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     });
     
     // Getting semesters.
-    api.get('semester_mod', 'list', {}).then(function(response){
+    api.post('semester_mod', 'list', {},function(response){
         console.debug('semesters');
         console.debug(response);
         $scope.semesters = response.data;
@@ -54,7 +54,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     });
     
     // Getting rooms.
-    api.get('room_mod', 'list', {}).then(function(response){
+    api.post('room_mod', 'list', {},function(response){
         console.debug('rooms');
         console.debug(response);
         $scope.rooms = response.data;
@@ -68,18 +68,18 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
         $scope.activeGroup = null;
         
         if ($scope.activeDep== null) return;
-        api.get('prof_mod', 'list', {
+        api.post('prof_mod', 'list', {
             depID: $scope.activeDep.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.activeDep.profs = response.data;
         }, function(response){
             console.debug(response);
         });
         
-        api.get('profile_mod', 'list', {
+        api.post('profile_mod', 'list', {
             depID: $scope.activeDep.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.activeDep.profiles = response.data;
         }, function(response){
@@ -90,9 +90,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
         $scope.activeGroup = null;
         
         if ($scope.activeProfile == null) return;
-        api.get('group_mod', 'list', {
+        api.post('group_mod', 'list', {
             profileID: $scope.activeProfile.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.activeProfile.groups = response.data;
         }, function(response){
@@ -101,9 +101,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     });
     $scope.$watch('activeGroup', function(){
         if ($scope.activeGroup== null) return;
-        api.get('grouplist_mod', 'list', {
+        api.post('grouplist_mod', 'list', {
             groupID: $scope.activeGroup.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.activeGroup.students = response.data;
         }, function(response){
@@ -120,7 +120,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     $scope.addProfile = function(){
         var dep = $scope.activeDep;
         if ($scope.newProfile.name.length < 10) return;
-        api.get('profile_mod', 'add', {
+        api.post('profile_mod', 'add', {
             name: $scope.newProfile.name,
             depID: dep.id,
             shortName: $scope.newProfile.short
@@ -139,7 +139,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     $scope.expandProfile = function(profile){
         $scope.activeProfile = profile;
         if (typeof(profile.groups) == 'undefined'){
-            api.get('group_mod', 'list', {
+            api.post('group_mod', 'list', {
                 profileID : profile.id
             })
             .then(function(response){
@@ -153,7 +153,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.deleteProfile = function(){
-        api.get('profile_mod', 'delete',{
+        api.post('profile_mod', 'delete',{
             profileID: $scope.activeProfile.id
         })
         .then(function(response){
@@ -171,7 +171,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
         $scope.activeGroup = group;
         
         // Grouplist
-        api.get('grouplist_mod','list',{
+        api.post('grouplist_mod','list',{
             groupID : group.id
         })
         .then(function(response){
@@ -186,7 +186,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     $scope.addGroup = function(){
         if (typeof($scope.newGroup.year) == 'undefined') return;
       	var year = $scope.newGroup.year.toString();
-        api.get('group_mod', 'add', {
+        api.post('group_mod', 'add', {
             profileID : $scope.activeProfile.id,
             name: $scope.activeProfile.short + '-' + year[2] + year[3],
             year: year
@@ -206,9 +206,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.deleteGroup = function(group){
-        api.get('group_mod', 'delete', {
+        api.post('group_mod', 'delete', {
             groupID: group.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.activeProfile.groups = flib.eject($scope.activeProfile.groups, group);
             $scope.activeGroup = null;
@@ -220,12 +220,12 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     // Grouplist.
     
     $scope.addStudent = function(){
-       api.get('grouplist_mod', 'add', {
+       api.post('grouplist_mod', 'add', {
            groupID: $scope.activeGroup.id,
            surname: $scope.newStudent.surname,
            name: $scope.newStudent.name,
            lastname: $scope.newStudent.lastname
-       }).then(function(response){
+       },function(response){
            console.debug(response);
            $scope.activeGroup.students.push(response.data);
            $scope.newStudent = {};
@@ -236,10 +236,10 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     }
     
     $scope.setPresident = function(student){
-        api.get('grouplist_mod', 'pr_change',{
+        api.post('grouplist_mod', 'pr_change',{
             groupID: $scope.activeGroup.id,
             studentID: student.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             if (response.data.status){
                 $scope.activeGroup.presID = student.id;
@@ -250,9 +250,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     }
     
     $scope.deleteStudent = function(student){
-        api.get('grouplist_mod', 'delete',{
+        api.post('grouplist_mod', 'delete',{
             studentID: student.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             var students = [];
             for(var i=0;i<$scope.activeGroup.students.length;++i){
@@ -268,13 +268,13 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     // Program.
     
     $scope.addProgram = function(){
-        api.get('program_mod', 'add', {
+        api.post('program_mod', 'add', {
             groupID: $scope.activeGroup.id,
             semesterID: $scope.chosenSemester.id,
             subjectID: $scope.newProgramNote.subjectID,            
             examType: $scope.newProgramNote.examType,
             profID: $scope.newProgramNote.prof.id
-        }).then(function(response){
+        },function(response){
             console.debug('program_mod_add: ');
             console.debug(response);
             $scope.activeGroup.program.push(response.data);
@@ -285,9 +285,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.deleteProgram = function(program){
-        api.get('program_mod', 'delete', {
+        api.post('program_mod', 'delete', {
             programID: program.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.activeGroup.program = flib.eject($scope.activeGroup.program, program);
         }, function(response){
@@ -297,17 +297,17 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     
     $scope.onSemesterSelect = function(){
         // Program
-        api.get('program_mod', 'list', {
+        api.post('program_mod', 'list', {
             groupID: $scope.activeGroup.id,
             semesterID: $scope.chosenSemester.id
-        }).then(function(response){
+        },function(response){
             console.debug('program_mod_list: ');
             console.debug(response);
             $scope.activeGroup.program = response.data;
         }, function(response){
             console.debug(response);
         });
-        api.get('prof_mod', 'list', {}).then(function(response){
+        api.post('prof_mod', 'list', {},function(response){
             console.debug(response);
             $scope.profs = response.data;
         }, function(response){
@@ -318,9 +318,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     // Subjects.
     
     $scope.addSubject = function(){
-        api.get('subject_mod', 'add',{
+        api.post('subject_mod', 'add',{
             name: $scope.newSubject.name
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.subjects.push(response.data);
             $scope.subjectForm = false;
@@ -331,9 +331,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.deleteSubject = function(subject){
-        api.get('subject_mod', 'delete',{
+        api.post('subject_mod', 'delete',{
             subjectID: subject.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.subjects = flib.eject($scope.subjects, subject);
         }, function(response){
@@ -344,9 +344,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     // Departments.
     
     $scope.addDep = function(){
-        api.get('dep_mod', 'add', {
+        api.post('dep_mod', 'add', {
             name: $scope.newDep.name
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             if (typeof($scope.departments) == 'undefined') $scope.departments = [];
             $scope.departments.push(response.data);
@@ -361,17 +361,17 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
         $scope.activeDep = dep;
         
         if (typeof(dep.profs) == 'undefined'){
-            api.get('prof_mod', 'list',{
+            api.post('prof_mod', 'list',{
                 depID: dep.id
-            }).then(function(response){
+            },function(response){
                 console.debug(response);
                 dep.profs = response.data;
             }, function(response){
                 console.debug(response);
             });
-            api.get('profile_mod', 'list',{
+            api.post('profile_mod', 'list',{
                 depID: dep.id
-            }).then(function(response){
+            },function(response){
                 console.debug(response);
                 dep.profiles = response.data;
             }, function(response){
@@ -381,9 +381,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.deleteDep = function(){
-        api.get('dep_mod', 'delete', {
+        api.post('dep_mod', 'delete', {
             depID: $scope.activeDep.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.departments = flib.eject($scope.departments, $scope.activeDep);
             $scope.activeDep = null;
@@ -395,12 +395,12 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     // Profs.
     
     $scope.addProf = function(){
-        api.get('prof_mod', 'add',{
+        api.post('prof_mod', 'add',{
             depID: $scope.activeDep.id,
             surname: $scope.newProf.surname,
             name: $scope.newProf.name,
             lastname: $scope.newProf.lastname
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             if (typeof($scope.activeDep.profs) == 'undefined') $scope.activeDep.profs = [];
             $scope.activeDep.profs.push(response.data);
@@ -412,9 +412,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.deleteProf = function(prof){
-        api.get('prof_mod', 'delete', {
+        api.post('prof_mod', 'delete', {
             profID: prof.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.activeDep.profs = flib.eject($scope.activeDep.profs, prof);
         }, function(response){
@@ -424,9 +424,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     
     // Rooms.
     $scope.addRoom = function(){
-        api.get('room_mod', 'add', {
+        api.post('room_mod', 'add', {
             name: $scope.newRoom.name
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.rooms.push(response.data);
             $scope.newRoom = {};
@@ -436,9 +436,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.deleteRoom = function(room){
-        api.get('room_mod', 'delete', {
+        api.post('room_mod', 'delete', {
             roomID: room.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.rooms = flib.eject($scope.rooms, room);
         }, function(response){
@@ -448,12 +448,12 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     // Semesters.
     
     $scope.addSemester = function(){
-        api.get('semester_mod', 'add', {
+        api.post('semester_mod', 'add', {
             year: $scope.newSemester.year,
             season: $scope.newSemester.season,
             startTime: flib.getSQLDate($scope.newSemester.startTimestamp),
             endTime: flib.getSQLDate($scope.newSemester.endTimestamp)
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.semesters.push($scope.newSemester);
             $scope.semesterForm = false;
@@ -464,9 +464,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.deleteSemester = function(semester){
-        api.get('semester_mod', 'delete', {
+        api.post('semester_mod', 'delete', {
             semesterID: semester.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.semesters = flib.eject($scope.semesters, semester);
         }, function(response){
@@ -493,7 +493,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     // Rules.
     $scope.addNewRule = function(){
         $scope.ruleForm = true;
-        api.get('prof_mod', 'list',{}).then(function(response){
+        api.post('prof_mod', 'list',{},function(response){
             console.debug(response);
             $scope.profs = response.data;
         }, function(response){
@@ -507,9 +507,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.getRules = function(){
-        api.get('schedule_mod', 'list',{
+        api.post('schedule_mod', 'list',{
             subjectID: $scope.scheduleFilter.subject.id
-        }).then(function(response){
+        },function(response){
             console.debug('rules for subject');
             console.debug(response);
             $scope.rulesSelection = response.data;
@@ -519,9 +519,9 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.deleteRule = function(rule){
-        api.get('schedule_mod', 'delete', {
+        api.post('schedule_mod', 'delete', {
             ruleID: rule.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.rules = flib.eject($scope.rules, rule);
         }, function(response){
@@ -537,17 +537,17 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
         $scope.newRule.prototype = rule;
         $scope.newRule.classes = $scope.generateDates();
                 
-        api.get('prof_mod', 'list',{}).then(function(response){
+        api.post('prof_mod', 'list',{},function(response){
             console.debug(response);
             $scope.profs = response.data;
             $scope.newRule.profs=flib.selectArrByField($scope.profs, 'id', $scope.newRule.prototype.profs);
         }, function(response){
             console.debug(response);
         });
-        api.get('group_mod', 'program_list', {
+        api.post('group_mod', 'program_list', {
             semesterID: $scope.scheduleFilter.semester.id,
             subjectID: $scope.newRule.subject.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.groups = response.data;
             $scope.newRule.groups = flib.selectArrByField($scope.groups, 'id', $scope.newRule.prototype.groups);
@@ -601,7 +601,7 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
             classType: $scope.newRule.classType,
             subgroup: $scope.newRule.subgroup != '' ? $scope.newRule.subgroup : null,
             order: $scope.newRule.order
-        }).then(function(response){
+        },function(response){
             console.debug(response);
         }, function(response){
             console.debug(response);
@@ -609,10 +609,10 @@ app.controller('managerController', ['$scope','api', 'flib', function($scope,api
     };
     
     $scope.onRuleSubjectChanged = function(){
-        api.get('group_mod', 'program_list', {
+        api.post('group_mod', 'program_list', {
             semesterID: $scope.scheduleFilter.semester.id,
             subjectID: $scope.newRule.subject.id
-        }).then(function(response){
+        },function(response){
             console.debug(response);
             $scope.groups = response.data;
             $scope.newRule.groups = [];

@@ -5,9 +5,9 @@ app.controller('subjectAsgController', ['$scope', 'api', 'flib', '$mdDialog', 's
     
     $scope.program = storage.activeProgram;
 
-    api.get('lab_mod', 'list', {
+    api.post('lab_mod', 'list', {
         programID: $scope.program.id
-    }).then(function(response){
+    },function(response){
         console.debug(response);
         $scope.labs = response.data;
         for(i=0;i<$scope.labs.length;++i){
@@ -17,9 +17,9 @@ app.controller('subjectAsgController', ['$scope', 'api', 'flib', '$mdDialog', 's
         console.debug(response);
     });
     
-    api.get('cg_mod', 'list', {
+    api.post('cg_mod', 'list', {
         programID: $scope.program.id
-    }).then(function(response){
+    },function(response){
         console.debug(response);
         $scope.cgs = response.data;
         for(i=0;i<$scope.cgs.length;++i){
@@ -29,9 +29,9 @@ app.controller('subjectAsgController', ['$scope', 'api', 'flib', '$mdDialog', 's
         console.debug(response);
     });
     
-    api.get('kr_mod', 'list', {
+    api.post('kr_mod', 'list', {
         programID: $scope.program.id
-    }).then(function(response){
+    },function(response){
         console.debug(response);
         $scope.krs = response.data;
         for(i=0;i<$scope.krs.length;++i){
@@ -41,9 +41,9 @@ app.controller('subjectAsgController', ['$scope', 'api', 'flib', '$mdDialog', 's
         console.debug(response);
     });
     
-    api.get('tests_mod', 'list', {
+    api.post('tests_mod', 'list', {
         programID: $scope.program.id
-    }).then(function(response){
+    },function(response){
         console.debug(response);
         $scope.tests = response.data;
         for(i=0;i<$scope.tests.length;++i){
@@ -75,9 +75,9 @@ app.controller('subjectAsgController', ['$scope', 'api', 'flib', '$mdDialog', 's
                 returnArray = 'tests';
                 break;
         }
-        api.get(requestGroup + '_mod', 'delete', {
+        api.post(requestGroup + '_mod', 'delete', {
             id: asg.id
-        }).then(function(response){
+        },function(response){
             $scope[returnArray] = flib.eject($scope[returnArray], asg);
         }, function(response){
             console.debug(response);
@@ -91,9 +91,9 @@ app.controller('subjectAsgController', ['$scope', 'api', 'flib', '$mdDialog', 's
         asg._count++;
         $timeout(function(){
             if (--asg._count != 0) return;
-            api.get(type+'_mod', asg.completed ? 'set' : 'unset',{
+            api.post(type+'_mod', asg.completed ? 'set' : 'unset',{
                 asgID: asg.id
-            }).then(function(response){
+            },function(response){
                 
             }, function(response){
                 console.debug(response);

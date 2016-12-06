@@ -1,11 +1,7 @@
 // Путь к моделям маршрутизатора.
 var viewFolder = 'ui.router/views/';
 
-// Подключение AngularJS с библиотеками
-var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages', /*'angular-loading-bar',*/ 'ngAnimate'])
-    /*.config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
-        cfpLoadingBarProvider.latencyThreshold = 50;
-    }])*/
+var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages', 'ngAnimate'])
     // Настройка маршрутизатора
     .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise('/main');
@@ -135,3 +131,19 @@ var app = angular.module("websiteApp", ['ui.router', 'ngMaterial', 'ngMessages',
             .accentPalette('red')
             .backgroundPalette('grey');
     }]);
+app.factory('httpInjector', [function(){
+    return {
+        request: function(config){
+            config.requestTimestamp = new Date().getTime();
+            return config;
+        },
+        response: function(response){
+            response.config.responseTimestamp = new Date().getTime();
+            response.config.requestTime = response.config.responseTimestamp - response.config.requestTimestamp;
+            return response;
+        }
+    };
+}]);
+app.config(['$httpProvider', function($httpProvider){
+    $httpProvider.interceptors.push('httpInjector');
+}]);
